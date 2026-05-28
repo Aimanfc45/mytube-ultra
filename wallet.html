@@ -1,184 +1,268 @@
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MyTube Wallet</title>
-  <style>
-    /* CSS sama macam tadi, aku ringkaskan. Guna CSS dari msg lepas */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
-    body{background:#0a0a0f;color:white;padding-bottom:80px}
-    .header{display:flex;justify-content:space-between;align-items:center;padding:20px 16px}
-    .logo-wrap{display:flex;align-items:center;gap:12px}
-    .logo-icon{width:40px;height:40px;background:linear-gradient(135deg,#ff3b30,#ff6b6b);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px}
-    .logo-text{font-size:20px;font-weight:700}
-    .logo-text span{color:#ff3b30}
-    .balance-card{margin:0 16px 20px;padding:24px;border-radius:24px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}
-    .balance-amount{font-size:36px;font-weight:700;margin-bottom:4px}
-    .actions{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}
-    .action-btn{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;cursor:pointer}
-    .action-icon{width:44px;height:44px;background:rgba(255,255,255,0.15);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px}
-    .assets-section{margin:0 16px;background:#1a1a22;border-radius:20px;padding:20px}
-    .asset-item{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #2a2a33}
-    .connect-btn{width:100%;padding:16px;background:linear-gradient(135deg,#ff3b30,#ff6b6b);border:none;border-radius:16px;color:white;font-weight:600;font-size:16px;cursor:pointer;margin-top:16px}
-    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#1a1a22;display:flex;justify-content:space-around;padding:12px 0;border-top:1px solid #2a2a33}
-    .nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;color:#8b8b9b}
-    .nav-item.active{color:white}
-    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:100}
-    .modal.active{display:flex;align-items:center;justify-content:center}
-    .modal-content{background:#1a1a22;padding:24px;border-radius:20px;width:90%;max-width:400px}
-    .modal input{width:100%;padding:12px;margin:8px 0;background:#2a2a33;border:none;border-radius:12px;color:white}
-    .modal button{width:100%;padding:14px;background:#ff3b30;border:none;border-radius:12px;color:white;font-weight:600;margin-top:12px}
-    .error{color:#ff3b30;margin-top:8px}
-    .success{color:#4caf50;margin-top:8px}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MyTube Wallet</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+body{background:#0a0a0f;color:#fff;padding-bottom:90px;}
+.header{display:flex;justify-content:space-between;align-items:center;padding:18px 16px;}
+.logo-wrap{display:flex;align-items:center;gap:12px;}
+.logo{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#ff3b30,#ff6b6b);display:flex;align-items:center;justify-content:center;}
+.logo::after{content:"▶";color:white;font-size:18px;margin-left:2px;}
+.logo-text{font-size:18px;font-weight:700;}
+.logo-text span{color:#ff3b30;}
+.verified{font-size:12px;color:#8b8b9b;display:flex;align-items:center;gap:4px;}
+.notif{width:40px;height:40px;background:#1a1a22;border-radius:12px;display:flex;align-items:center;justify-content:center;position:relative;}
+.notif::after{content:'';width:8px;height:8px;background:#ff3b30;border-radius:50%;position:absolute;top:6px;right:6px;}
+
+.balance-card{
+  margin:0 16px 20px;padding:22px;border-radius:24px;
+  background: url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEhUSEhIVFRUVFRcVGBgVGBcXGBgVGBcWFhUVFRUYHSggGBolGxgWITEhJSkrLi4vGB8zODMtNygtLisBCgoKDg0OGhAQGy0mICYtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLf/AABEIAMgA9AMBIgACEQEDEQH/xAAcAAEAAgMBAQEAAAAAAAAAAAAABQYHAAIDCAH/xABMEAABAwEGAQoHBAoCAgMAAAABAAIRAyEEEkEFQVFhBhMiMnGBkaGxwQcjMrLh8BRS8RQzYnKC8RckM4KSobL/xAAXAQEBAQEBAAAAAAAAAAAAAAAAAQID/8QAHxEBAAICAQQBAAAAAAAAAAAAAAECEQMSITFBUf/aAAwDAQACEQMRAD8A9s4iKlYhK0UCFKoqqwgUKoCKKgbQCKNFxAAAFAGAVIAAAGgEAAACARAUCAApVVACgKQAABUCgABqkJBQAf4aEAAAAAAAAAAAABAAAAAAAAAAAAAAEAFQAAAAAACAAAEAAAAAAAgEAAAACgAAAMVAgAFSa1ASBVaoUSwBSANAAEAgAAAEAAAACAAPUAFAAEABAAAACAAAAAAAAAAJAAABAAAAAwAAAAAAAAABUAABAAAAAAAAAAAAAAAADAGBgAAASFiEIARoAAABQFAMAAAACAAAAACAAEAAADUAAABAgCAAUAAAAAACUAQABAAAAAFAAAAAAAAIAAAACAAAAAAAAAAAAAAAgAAAAAAAAAACQAAAAAADAAAAAAAAAAEAQAAAAAAAH//2Q==') center/cover no-repeat;
+  position:relative;overflow:hidden;min-height:220px;
+}
+.balance-label{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.8);font-size:14px;}
+.balance-amount{font-size:32px;font-weight:700;margin:8px 0;}
+.balance-change{color:#00d26a;font-size:14px;font-weight:600;}
+.currency-tag{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.15);padding:4px 10px;border-radius:20px;font-size:13px;margin-left:8px;backdrop-filter:blur(10px);}
+.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px;}
+.action-btn{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;cursor:pointer;}
+.action-icon{width:46px;height:46px;background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+
+.assets-section{margin:0 16px;background:#1a1a22;border-radius:20px;padding:18px;}
+.assets-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.assets-title{font-weight:600;font-size:16px;}
+.manage{color:#8b8b9b;font-size:13px;cursor:pointer;}
+
+.asset-item{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #2a2a33;}
+.asset-item:last-child{border-bottom:none;}
+.asset-left{display:flex;align-items:center;gap:12px;}
+.asset-icon{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.asset-name{font-weight:600;font-size:15px;}
+.asset-sub{font-size:12px;color:#8b8b9b;}
+.asset-right{text-align:right;}
+.asset-amount{font-weight:600;font-size:15px;}
+.asset-usd{font-size:12px;color:#8b8b9b;}
+.asset-change{font-size:12px;color:#00d26a;}
+
+.connect-btn{width:100%;margin-top:16px;padding:14px;background:linear-gradient(135deg,#ff3b30,#ff6b6b);border:none;border-radius:16px;color:white;font-weight:600;font-size:16px;cursor:pointer;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#1a1a22;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #2a2a33;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;color:#8b8b9b;}
+.nav-item.active{color:white;}
+.nav-item.active .nav-icon{background:#7f5af0;color:white;}
+.nav-icon{width:56px;height:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+#statusMsg{margin-top:10px;font-size:13px;text-align:center;}
+.error{color:#ff3b30;}
+.success{color:#00d26a;}
+.loading{color:#8b8b9b;}
+</style>
 </head>
 <body>
 
-  <div class="header">
-    <div class="logo-wrap">
-      <div class="logo-icon">▶</div>
-      <div>
-        <div class="logo-text">My<span>Tube</span> Wallet</div>
-        <div>Your Web3 Wallet ✓</div>
-      </div>
+<div class="header">
+  <div class="logo-wrap">
+    <div class="logo"></div>
+    <div>
+      <div class="logo-text">My<span>Tube</span> Wallet</div>
+      <div class="verified">Your Web3 Wallet ✓</div>
+    </div>
+  </div>
+  <div class="notif">🔔</div>
+</div>
+
+<div class="balance-card">
+  <div class="balance-label">Total Balance 👁</div>
+  <div style="display:flex;align-items:center;">
+    <div class="balance-amount" id="totalBalance">$0.00</div>
+    <div class="currency-tag">USD</div>
+  </div>
+  <div class="balance-change" id="change">Connect wallet to view</div>
+  
+  <div class="actions">
+    <div class="action-btn" onclick="alert('Send function coming next')">
+      <div class="action-icon">↗</div>Send
+    </div>
+    <div class="action-btn" onclick="copyAddress()">
+      <div class="action-icon">↓</div>Receive
+    </div>
+    <div class="action-btn" onclick="alert('Swap via PancakeSwap')">
+      <div class="action-icon">⇄</div>Swap
+    </div>
+    <div class="action-btn" onclick="openBscScan()">
+      <div class="action-icon">🕒</div>History
     </div>
   </div>
 
-  <div class="balance-card">
-    <div>Total Balance</div>
-    <div class="balance-amount" id="balance">$0.00</div>
-    <div id="change">+0.00% this week</div>
+  <button class="connect-btn" id="connectBtn">Connect Wallet</button>
+  <div id="statusMsg"></div>
+</div>
+
+<div class="assets-section">
+  <div class="assets-header">
+    <div class="assets-title">My Assets</div>
+    <div class="manage">Manage Tokens ⚙</div>
+  </div>
+
+  <div id="assetsList">
+    <!-- Assets akan diisi real data dari blockchain -->
+  </div>
+</div>
+
+<div class="bottom-nav">
+  <div class="nav-item">⌂<br>Home</div>
+  <div class="nav-item">📊<br>Market</div>
+  <div class="nav-item active">💳<br>Wallet</div>
+  <div class="nav-item">💰<br>Earn</div>
+  <div class="nav-item">👤<br>Profile</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<script>
+const BSC_RPC = "https://bsc-dataseed.binance.org/";
+const provider = new ethers.providers.JsonRpcProvider(BSC_RPC);
+
+const TOKENS = [
+  {symbol: "BNB", name: "BNB", address: null, decimals: 18, icon: "#f0b90b", iconText: "B"},
+  {symbol: "USDT", name: "Tether USD", address: "0x55d398326f99059fF775485246999027B3197955", decimals: 18, icon: "#26a17b", iconText: "T"},
+  {symbol: "MYT", name: "MyTube Token", address: "0x0000", decimals: 18, icon: "#ff3b30", iconText: "M"}, // Tukar contract address MYT kau
+];
+
+let userAddress = null;
+let signer = null;
+
+const connectBtn = document.getElementById("connectBtn");
+const statusMsg = document.getElementById("statusMsg");
+
+connectBtn.addEventListener("click", async () => {
+  if (!window.ethereum) {
+    statusMsg.textContent = "Install MetaMask dulu";
+    statusMsg.className = "error";
+    return;
+  }
+
+  try {
+    statusMsg.textContent = "Connecting...";
+    statusMsg.className = "loading";
+
+    await window.ethereum.request({ method: 'eth_requestAccounts' });
     
-    <div class="actions">
-      <div class="action-btn" onclick="openSendModal()">
-        <div class="action-icon">↗</div>Send
-      </div>
-      <div class="action-btn" onclick="openReceiveModal()">
-        <div class="action-icon">↓</div>Receive
-      </div>
-      <div class="action-btn" onclick="alert('Swap coming soon')">
-        <div class="action-icon">⇄</div>Swap
-      </div>
-      <div class="action-btn" onclick="loadHistory()">
-        <div class="action-icon">🕒</div>History
-      </div>
-    </div>
-
-    <button class="connect-btn" id="connectBtn">Connect Wallet</button>
-    <div id="statusMsg"></div>
-  </div>
-
-  <div class="assets-section">
-    <div class="assets-header">My Assets</div>
-    <div class="asset-item">
-      <div>BNB<br><small>BNB Smart Chain</small></div>
-      <div><span id="bnbAmount">0 BNB</span><br><span id="bnbUSD">$0.00</span></div>
-    </div>
-  </div>
-
-  <!-- Send Modal -->
-  <div class="modal" id="sendModal">
-    <div class="modal-content">
-      <h3>Send BNB</h3>
-      <input type="text" id="sendTo" placeholder="Recipient Address 0x...">
-      <input type="number" id="sendAmount" placeholder="Amount BNB" step="0.001">
-      <input type="password" id="privateKey" placeholder="Your Private Key">
-      <button onclick="sendBNB()">Send Now</button>
-      <button onclick="closeModal()" style="background:#555">Cancel</button>
-    </div>
-  </div>
-
-  <!-- Receive Modal -->
-  <div class="modal" id="receiveModal">
-    <div class="modal-content">
-      <h3>Receive BNB</h3>
-      <p>Your Address:</p>
-      <input type="text" id="myAddress" readonly>
-      <button onclick="navigator.clipboard.writeText(document.getElementById('myAddress').value)">Copy</button>
-      <button onclick="closeModal()">Close</button>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-  <script>
-    const API_URL = "https://xxx.replit.app"; // Tukar ke URL Replit kau
-    let userAddress = null;
-    let provider, signer;
-
-    const connectBtn = document.getElementById("connectBtn");
-    const statusMsg = document.getElementById("statusMsg");
-
-    connectBtn.addEventListener("click", async () => {
-      if (!window.ethereum) return alert("Install MetaMask");
-      
-      await window.ethereum.request({ method: 'eth_requestAccounts' });
-      provider = new ethers.providers.Web3Provider(window.ethereum);
-      signer = provider.getSigner();
-      userAddress = await signer.getAddress();
-      
-      loadBalance();
-      connectBtn.textContent = `${userAddress.slice(0,6)}...${userAddress.slice(-4)}`;
-      connectBtn.style.background = "#4caf50";
+    // Force switch to BSC Mainnet
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: '0x38' }],
+    }).catch(async (err) => {
+      if (err.code === 4902) {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId: '0x38',
+            chainName: 'BNB Smart Chain',
+            rpcUrls: [BSC_RPC],
+            nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+            blockExplorerUrls: ['https://bscscan.com']
+          }]
+        });
+      }
     });
 
-    async function loadBalance() {
-      if (!userAddress) return;
-      const res = await fetch(`${API_URL}/api/balance/${userAddress}`);
-      const data = await res.json();
+    const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+    signer = web3Provider.getSigner();
+    userAddress = await signer.getAddress();
+
+    connectBtn.textContent = `${userAddress.slice(0,6)}...${userAddress.slice(-4)}`;
+    connectBtn.style.background = "#00d26a";
+    statusMsg.textContent = "Connected! Loading balances...";
+    statusMsg.className = "success";
+
+    await loadAllBalances();
+
+  } catch (err) {
+    console.error(err);
+    statusMsg.textContent = "Error: " + err.message;
+    statusMsg.className = "error";
+  }
+});
+
+async function loadAllBalances() {
+  try {
+    statusMsg.textContent = "Fetching real balances...";
+    
+    // Get BNB price
+    const priceRes = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=binancecoin,tether&vs_currencies=usd");
+    const prices = await priceRes.json();
+    
+    let totalUSD = 0;
+    let assetsHTML = "";
+
+    for (let token of TOKENS) {
+      let balance = 0;
+      let usdValue = 0;
       
-      document.getElementById("balance").textContent = `$${data.usd}`;
-      document.getElementById("bnbAmount").textContent = `${data.bnb} BNB`;
-      document.getElementById("bnbUSD").textContent = `$${data.usd}`;
-    }
-
-    function openSendModal() {
-      if (!userAddress) return alert("Connect wallet first");
-      document.getElementById("sendModal").classList.add("active");
-    }
-
-    function openReceiveModal() {
-      if (!userAddress) return alert("Connect wallet first");
-      document.getElementById("myAddress").value = userAddress;
-      document.getElementById("receiveModal").classList.add("active");
-    }
-
-    function closeModal() {
-      document.querySelectorAll(".modal").forEach(m => m.classList.remove("active"));
-    }
-
-    async function sendBNB() {
-      const to = document.getElementById("sendTo").value;
-      const amount = document.getElementById("sendAmount").value;
-      const privateKey = document.getElementById("privateKey").value;
-      
-      statusMsg.textContent = "Sending...";
-      const res = await fetch(`${API_URL}/api/send`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ privateKey, to, amount })
-      });
-      
-      const data = await res.json();
-      if (data.success) {
-        statusMsg.textContent = "Sent! TX: " + data.txHash.slice(0,10) + "...";
-        statusMsg.className = "success";
-        closeModal();
-        loadBalance();
-      } else {
-        statusMsg.textContent = "Error: " + data.error;
-        statusMsg.className = "error";
+      if (token.symbol === "BNB") {
+        const bal = await provider.getBalance(userAddress);
+        balance = parseFloat(ethers.utils.formatEther(bal));
+        usdValue = balance * prices.binancecoin.usd;
+      } else if (token.address && token.address !== "0x0000") {
+        // ERC20 token
+        const abi = ["function balanceOf(address) view returns (uint256)", "function decimals() view returns (uint8)"];
+        const contract = new ethers.Contract(token.address, abi, provider);
+        const bal = await contract.balanceOf(userAddress);
+        balance = parseFloat(ethers.utils.formatUnits(bal, token.decimals));
+        
+        if (token.symbol === "USDT") {
+          usdValue = balance * prices.tether.usd;
+        }
       }
+      
+      totalUSD += usdValue;
+      
+      assetsHTML += `
+        <div class="asset-item">
+          <div class="asset-left">
+            <div class="asset-icon" style="background:${token.icon};">${token.iconText}</div>
+            <div>
+              <div class="asset-name">${token.symbol}</div>
+              <div class="asset-sub">${token.name}</div>
+            </div>
+          </div>
+          <div class="asset-right">
+            <div class="asset-amount">${balance.toFixed(4)} ${token.symbol}</div>
+            <div class="asset-usd">$${usdValue.toFixed(2)}</div>
+          </div>
+        </div>
+      `;
     }
 
-    async function loadHistory() {
-      if (!userAddress) return alert("Connect wallet first");
-      const res = await fetch(`${API_URL}/api/history/${userAddress}`);
-      const data = await res.json();
-      console.log(data);
-      alert("Check console for transaction history");
-    }
-  </script>
+    document.getElementById("totalBalance").textContent = `$${totalUSD.toFixed(2)}`;
+    document.getElementById("change").textContent = "Live from BSC blockchain";
+    document.getElementById("assetsList").innerHTML = assetsHTML;
+    statusMsg.textContent = "Balances updated ✓";
+    statusMsg.className = "success";
+
+  } catch (err) {
+    console.error(err);
+    statusMsg.textContent = "Failed to load balances";
+    statusMsg.className = "error";
+  }
+}
+
+function copyAddress() {
+  if (!userAddress) return alert("Connect wallet first");
+  navigator.clipboard.writeText(userAddress);
+  alert("Address copied!");
+}
+
+function openBscScan() {
+  if (!userAddress) return alert("Connect wallet first");
+  window.open(`https://bscscan.com/address/${userAddress}`, "_blank");
+}
+
+// Auto reload bila tukar account
+if (window.ethereum) {
+  window.ethereum.on('accountsChanged', () => window.location.reload());
+}
+</script>
 </body>
 </html>
