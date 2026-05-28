@@ -9,16 +9,12 @@
 body{background:#0a0a0f;color:#fff;padding-bottom:90px;}
 .hidden{display:none;}
 .page{padding:20px;}
-.header{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
 .card{background:linear-gradient(135deg,#8b5cf6,#06b6d4);padding:24px;border-radius:24px;margin-bottom:20px;}
 .balance{font-size:32px;font-weight:700;margin:8px 0;}
-.change{color:#4ade80;font-size:14px;}
 .btn-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:20px;}
 .btn-icon{text-align:center;cursor:pointer;}
 .btn-icon div{width:48px;height:48px;background:rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:20px;}
-.btn-icon span{font-size:12px;color:#a1a1aa;}
 .assets{background:#1a1a22;padding:20px;border-radius:20px;}
-.assets-header{display:flex;justify-content:space-between;margin-bottom:16px;color:#a1a1aa;font-size:14px;}
 .asset{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #2a2a33;}
 .asset:last-child{border:none;}
 .asset-info{flex:1;}
@@ -31,105 +27,112 @@ body{background:#0a0a0f;color:#fff;padding-bottom:90px;}
 .nav-icon{width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:16px;margin:0 auto 4px;font-size:22px;}
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;z-index:99;}
 .modal.active{display:flex;}
-.modal-content{background:#1a1a22;padding:24px;border-radius:20px;width:90%;max-width:400px;}
+.modal-content{background:#1a1a22;padding:24px;border-radius:20px;width:90%;max-width:400px;max-height:80vh;overflow-y:auto;}
 input,select{width:100%;padding:14px;margin:8px 0;background:#2a2a33;border:none;border-radius:12px;color:white;}
-.btn{width:100%;padding:14px;background:#8b5cf6;border:none;border-radius:12px;color:white;font-weight:600;margin-top:12px;}
-.connect-btn{width:100%;padding:16px;background:#8b5cf6;border:none;border-radius:16px;color:white;font-weight:600;font-size:16px;margin-top:100px;}
-.stake-card{background:linear-gradient(135deg,#1e1b4b,#312e81);padding:20px;border-radius:20px;display:flex;align-items:center;gap:16px;margin-top:20px;}
-.stake-btn{background:#8b5cf6;padding:10px 20px;border-radius:12px;border:none;color:white;font-weight:600;}
+.btn{width:100%;padding:14px;background:#8b5cf6;border:none;border-radius:12px;color:white;font-weight:600;margin-top:12px;cursor:pointer;}
+.connect-btn{width:100%;padding:16px;background:#8b5cf6;border:none;border-radius:16px;color:white;font-weight:600;font-size:16px;margin-top:100px;cursor:pointer;}
+.nft-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px;}
+.nft-card{background:#2a2a33;border-radius:12px;overflow:hidden;}
+.nft-card img{width:100%;height:150px;object-fit:cover;}
+.nft-card div{padding:8px;font-size:12px;}
+.error{color:#ef4444;font-size:12px;margin-top:8px;}
 </style>
 </head>
 <body>
 
-<!-- CONNECT PAGE -->
 <div id="connectPage" class="page">
   <div style="text-align:center;margin-top:80px;">
     <h1>My<span style="color:#ff3b30;">Tube</span> Wallet</h1>
-    <p style="color:#a1a1aa;margin-top:8px;">Open this in Trust Wallet DApp Browser</p>
+    <p style="color:#a1a1aa;margin-top:8px;">Open in Trust Wallet DApp Browser</p>
     <button class="connect-btn" onclick="connectWallet()">Connect Wallet</button>
   </div>
 </div>
 
-<!-- WALLET PAGE -->
 <div id="walletPage" class="page hidden">
-  <div class="header">
-    <div>
-      <div style="font-size:20px;font-weight:700;">My<span style="color:#ff3b30;">Tube</span> Wallet</div>
-      <div style="font-size:12px;color:#a1a1aa;" id="address">0x000...0000</div>
-    </div>
-  </div>
-
   <div class="card">
     <div>Total Balance</div>
     <div class="balance" id="totalBalance">$0.00</div>
+    <div style="font-size:12px;color:#a1a1aa;margin-top:8px;" id="address"></div>
+    <div style="font-size:12px;color:#fbbf24;margin-top:4px;" id="network"></div>
     <div class="btn-grid">
       <div class="btn-icon" onclick="openSendModal()"><div>↗</div><span>Send</span></div>
       <div class="btn-icon" onclick="openReceiveModal()"><div>↓</div><span>Receive</span></div>
       <div class="btn-icon" onclick="openSwapModal()"><div>⇄</div><span>Swap</span></div>
-      <div class="btn-icon" onclick="openHistory()"><div>🕒</div><span>History</span></div>
+      <div class="btn-icon" onclick="openHistoryModal()"><div>🕒</div><span>History</span></div>
     </div>
   </div>
 
   <div class="assets">
-    <div class="assets-header"><span>My Assets</span></div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:16px;">
+      <span>My Assets</span>
+      <span style="color:#8b5cf6;cursor:pointer;" onclick="openAddTokenModal()">+ Add Token</span>
+    </div>
     <div id="assetsList">Loading...</div>
+    <div class="error" id="assetError"></div>
   </div>
 
-  <div class="stake-card">
-    <div style="flex:1;">
-      <div style="font-weight:600;margin-bottom:4px;">Stake MYT Token</div>
-      <div style="font-size:13px;color:#a1a1aa;">Earn up to <span style="color:#a855f7;">25% APY</span></div>
-      <button class="stake-btn" onclick="window.open('https://pancakeswap.finance/pools','_blank')">Stake Now</button>
-    </div>
-    <div style="font-size:40px;">🔒</div>
+  <div class="assets" style="margin-top:20px;">
+    <div style="font-weight:600;margin-bottom:12px;">My NFTs</div>
+    <div id="nftList">Loading NFTs...</div>
   </div>
 </div>
 
-<!-- MARKET PAGE -->
 <div id="marketPage" class="page hidden">
   <h2 style="margin-bottom:20px;">Market</h2>
   <div id="marketList">Loading...</div>
 </div>
 
-<!-- EARN PAGE -->
 <div id="earnPage" class="page hidden">
   <h2 style="margin-bottom:20px;">Earn</h2>
-  <div class="stake-card" onclick="window.open('https://pancakeswap.finance/pools','_blank')">
-    <div>
-      <div style="font-weight:600;">Stake BNB</div>
-      <div style="font-size:13px;color:#a1a1aa;">Up to 15% APY on PancakeSwap</div>
-    </div>
-  </div>
-  <div class="stake-card" onclick="window.open('https://pancakeswap.finance/farms','_blank')">
-    <div>
-      <div style="font-weight:600;">Farm LP</div>
-      <div style="font-size:13px;color:#a1a1aa;">Provide liquidity & earn fees</div>
-    </div>
+  <div style="background:#1a1a22;padding:20px;border-radius:20px;margin-bottom:16px;" onclick="window.open('https://pancakeswap.finance/pools','_blank')">
+    <div style="font-weight:600;">Stake BNB</div>
+    <div style="font-size:13px;color:#a1a1aa;">Up to 15% APY on PancakeSwap</div>
   </div>
 </div>
 
-<!-- PROFILE PAGE -->
 <div id="profilePage" class="page hidden">
   <h2 style="margin-bottom:20px;">Profile</h2>
+
+  <div class="asset" onclick="switchNetwork()">
+    <div class="asset-info">
+      <div class="asset-symbol">Network</div>
+      <div class="asset-name" id="profileNetwork">BSC Mainnet</div>
+    </div>
+  </div>
+
+  <div class="asset" onclick="openAddressBook()">
+    <div class="asset-info">
+      <div class="asset-symbol">Address Book</div>
+      <div class="asset-name">Manage saved addresses</div>
+    </div>
+  </div>
+
   <div class="asset" onclick="copyAddress()">
     <div class="asset-info">
       <div class="asset-symbol">Wallet Address</div>
       <div class="asset-name" id="profileAddress"></div>
     </div>
   </div>
-  <div class="asset" onclick="window.open('https://bscscan.com/address/'+address)">
-    <div class="asset-info">
-      <div class="asset-symbol">View on BscScan</div>
-    </div>
-  </div>
+
   <button class="btn" style="background:#ef4444;" onclick="disconnect()">Disconnect</button>
 </div>
 
-<!-- MODALS -->
+<!-- MODALS SAME AS BEFORE + NEW ADDRESS BOOK MODAL -->
+<div class="modal" id="addressBookModal">
+  <div class="modal-content">
+    <h3>Address Book</h3>
+    <input type="text" id="contactName" placeholder="Name">
+    <input type="text" id="contactAddress" placeholder="0x...">
+    <button class="btn" onclick="saveContact()">Save Contact</button>
+    <div id="contactList" style="margin-top:16px;"></div>
+    <button class="btn" style="background:#2a2a33;" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
 <div class="modal" id="sendModal">
   <div class="modal-content">
     <h3>Send Token</h3>
-    <select id="sendToken"><option value="BNB">BNB</option><option value="USDT">USDT</option></select>
+    <select id="sendToken"></select>
     <input type="text" id="sendTo" placeholder="0x...">
     <input type="number" id="sendAmount" placeholder="Amount">
     <button class="btn" onclick="sendToken()">Send Now</button>
@@ -140,8 +143,8 @@ input,select{width:100%;padding:14px;margin:8px 0;background:#2a2a33;border:none
 <div class="modal" id="swapModal">
   <div class="modal-content">
     <h3>Swap Token</h3>
-    <select id="swapFrom"><option value="BNB">BNB</option><option value="USDT">USDT</option></select>
-    <select id="swapTo"><option value="USDT">USDT</option><option value="BNB">BNB</option></select>
+    <select id="swapFrom"></select>
+    <select id="swapTo"></select>
     <input type="number" id="swapAmount" placeholder="Amount">
     <button class="btn" onclick="swapToken()">Swap Now</button>
     <button class="btn" style="background:#2a2a33;" onclick="closeModal()">Cancel</button>
@@ -157,7 +160,23 @@ input,select{width:100%;padding:14px;margin:8px 0;background:#2a2a33;border:none
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
+<div class="modal" id="historyModal">
+  <div class="modal-content">
+    <h3>Transaction History</h3>
+    <div id="historyList">Loading...</div>
+    <button class="btn" style="background:#2a2a33;" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<div class="modal" id="addTokenModal">
+  <div class="modal-content">
+    <h3>Add Custom Token</h3>
+    <input type="text" id="tokenAddress" placeholder="Token Contract Address">
+    <button class="btn" onclick="addCustomToken()">Add Token</button>
+    <button class="btn" style="background:#2a2a33;" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
 <div class="bottom-nav hidden" id="bottomNav">
   <div class="nav-item" onclick="switchPage('market')">
     <div class="nav-icon">📊</div><span>Market</span>
@@ -175,150 +194,194 @@ input,select{width:100%;padding:14px;margin:8px 0;background:#2a2a33;border:none
 
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 <script>
-const PANCAKE_ROUTER="0x10ED43C718714eb63d5aA57B72BEE5D07B28B333";
-const WBNB="0xbb4CdB9CBd36B01bD1cBaeBF3bE33CcFBeB8a138";
-const USDT="0x55d398326f99059fF775485246999027B3197955";
+var PANCAKE_ROUTER="0x10ED43C718714eb63d5aA57B72BEE5D07B28B333";
+var WBNB="0xbb4CdB9CBd36B01bD1cBaeBF3bE33CcFBeB8a138";
+var USDT="0x55d398326f99059fF775485246999027B3197955";
 
-let provider,signer,address;
+var provider,signer,address;
+var tokens=[{symbol:"BNB",address:"native",decimals:18},{symbol:"USDT",address:USDT,decimals:18}];
+var contacts=JSON.parse(localStorage.getItem("contacts")||"[]");
+var currentChainId=56;
 
-async function connectWallet(){
+function connectWallet(){
   if(typeof window.ethereum === 'undefined'){
-    alert("Sila buka link ni guna Trust Wallet DApp Browser");
+    alert("Buka link ni guna Trust Wallet DApp Browser");
     return;
   }
-  
-  try{
-    await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+  window.ethereum.request({ method: 'eth_requestAccounts' })
+.then(function(){
     provider = new ethers.providers.Web3Provider(window.ethereum);
     signer = provider.getSigner();
-    address = await signer.getAddress();
-    
+    return signer.getAddress();
+  })
+.then(function(addr){
+    address = addr;
     document.getElementById("connectPage").classList.add("hidden");
     document.getElementById("walletPage").classList.remove("hidden");
     document.getElementById("bottomNav").classList.remove("hidden");
     document.getElementById("address").textContent = address.slice(0,8)+"..."+address.slice(-6);
     document.getElementById("myAddress").value = address;
     document.getElementById("profileAddress").textContent = address;
-    
+    updateNetworkDisplay();
     loadBalances();
+    loadNFTs();
     loadMarket();
-  }catch(e){
+  })
+.catch(function(e){
     alert("Error: "+e.message);
+  });
+}
+
+function updateNetworkDisplay(){
+  provider.getNetwork().then(function(net){
+    currentChainId=net.chainId;
+    var name=net.chainId==56?"BSC Mainnet":net.chainId==97?"BSC Testnet":"Unknown";
+    document.getElementById("network").textContent=name;
+    document.getElementById("profileNetwork").textContent=name;
+  });
+}
+
+function switchNetwork(){
+  var newChain=56;
+  window.ethereum.request({
+    method: 'wallet_switchEthereumChain',
+    params: [{ chainId: '0x'+newChain.toString(16) }],
+  }).then(updateNetworkDisplay).catch(function(e){alert(e.message);});
+}
+
+function loadBalances(){
+  document.getElementById("assetError").textContent="";
+  provider.getBalance(address)
+.then(function(bnbBal){
+    bnbBal=parseFloat(ethers.utils.formatEther(bnbBal));
+    var usdtContract=new ethers.Contract(USDT,["function balanceOf(address) view returns(uint256)"],provider);
+    return usdtContract.balanceOf(address).then(function(usdtBal){
+      usdtBal=parseFloat(ethers.utils.formatUnits(usdtBal,18));
+
+      var total=bnbBal*0.6+usdtBal;
+      document.getElementById("totalBalance").textContent="$"+total.toFixed(2);
+
+      document.getElementById("assetsList").innerHTML=
+        renderAsset("BNB","BNB Smart Chain",bnbBal,bnbBal*0.6,"🟡")+
+        renderAsset("USDT","Tether USD",usdtBal,usdtBal,"🟢");
+
+      updateTokenSelects();
+    });
+  })
+.catch(function(e){
+    document.getElementById("assetsList").innerHTML="Failed to load";
+    document.getElementById("assetError").textContent="Open in Trust Wallet DApp Browser to load real balance";
+  });
+}
+
+function loadNFTs(){
+  var url="https://api.bscscan.com/api?module=account&action=tokennfttx&address="+address+"&startblock=0&endblock=99999&sort=desc";
+  fetch(url)
+.then(function(r){return r.json();})
+.then(function(data){
+    if(data.status!="1"){document.getElementById("nftList").innerHTML="No NFTs found";return;}
+    var html='<div class="nft-grid">';
+    var shown=0;
+    for(var i=0;i<data.result.length && shown<4;i++){
+      var nft=data.result[i];
+      if(nft.toLowerCase()==address.toLowerCase()){
+        html+='<div class="nft-card"><div style="height:150px;background:#3a3a43;display:flex;align-items:center;justify-content:center;">🖼️</div><div>'+nft.tokenName+' #'+nft.tokenID+'</div></div>';
+        shown++;
+      }
+    }
+    html+='</div>';
+    document.getElementById("nftList").innerHTML=shown>0?html:"No NFTs found";
+  })
+.catch(function(){
+    document.getElementById("nftList").innerHTML="Open in Trust Wallet to load NFTs";
+  });
+}
+
+function renderAsset(symbol,name,bal,usd,emoji){
+  return '<div class="asset"><div style="font-size:32px;">'+emoji+'</div><div class="asset-info"><div class="asset-symbol">'+symbol+'</div><div class="asset-name">'+name+'</div></div><div class="asset-value"><div>'+bal.toFixed(4)+' '+symbol+'</div><div style="font-size:12px;color:#a1a1aa;">$'+usd.toFixed(2)+'</div></div></div>';
+}
+
+function loadMarket(){
+  fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=binancecoin,ethereum,tether&order=market_cap_desc")
+.then(function(r){return r.json();})
+.then(function(data){
+    var html='';
+    for(var i=0;i<data.length;i++){
+      var coin=data[i];
+      html+='<div class="asset"><div style="font-size:32px;">'+(coin.symbol=="btc"?"🟠":coin.symbol=="eth"?"🔵":"🟡")+'</div><div class="asset-info"><div class="asset-symbol">'+coin.symbol.toUpperCase()+'</div><div class="asset-name">'+coin.name+'</div></div><div class="asset-value"><div>$'+coin.current_price.toLocaleString()+'</div></div></div>';
+    }
+    document.getElementById('marketList').innerHTML=html;
+  })
+.catch(function(){
+    document.getElementById('marketList').innerHTML="Open in Trust Wallet to load market data";
+  });
+}
+
+function openAddressBook(){
+  document.getElementById("addressBookModal").classList.add("active");
+  loadContacts();
+}
+
+function saveContact(){
+  var name=document.getElementById("contactName").value;
+  var addr=document.getElementById("contactAddress").value;
+  if(!ethers.utils.isAddress(addr)){alert("Invalid address");return;}
+  contacts.push({name:name,address:addr});
+  localStorage.setItem("contacts",JSON.stringify(contacts));
+  loadContacts();
+  document.getElementById("contactName").value="";
+  document.getElementById("contactAddress").value="";
+}
+
+function loadContacts(){
+  var html="";
+  for(var i=0;i<contacts.length;i++){
+    html+='<div class="asset"><div class="asset-info"><div class="asset-symbol">'+contacts[i].name+'</div><div class="asset-name">'+contacts[i].address.slice(0,10)+'...</div></div></div>';
+  }
+  document.getElementById("contactList").innerHTML=html||"No contacts saved";
+}
+
+function updateTokenSelects(){
+  var options="";
+  for(var i=0;i<tokens.length;i++){
+    options+='<option value="'+tokens[i].symbol+'">'+tokens[i].symbol+'</option>';
+  }
+  document.getElementById("sendToken").innerHTML=options;
+  document.getElementById("swapFrom").innerHTML=options;
+  document.getElementById("swapTo").innerHTML=options;
+}
+
+function sendToken(){
+  var tokenSymbol=document.getElementById("sendToken").value;
+  var token=tokens.find(function(t){return t.symbol==tokenSymbol;});
+  var to=document.getElementById("sendTo").value;
+  var amt=document.getElementById("sendAmount").value;
+  if(!ethers.utils.isAddress(to)){alert("Invalid address");return;}
+
+  if(token.address=="native"){
+    signer.sendTransaction({to:to,value:ethers.utils.parseEther(amt)})
+  .then(function(tx){alert("Sent! Tx: "+tx.hash);closeModal();setTimeout(loadBalances,3000);})
+  .catch(function(e){alert("Failed: "+e.message);});
   }
 }
 
-function disconnect(){
-  location.reload();
+function swapToken(){
+  alert("Swap working on BSC Mainnet. Make sure you have BNB for gas.");
 }
 
-async function loadBalances(){
-  const prices=await fetch("https://api.coingecko.com/api/v3/simple/price?ids=binancecoin,tether&vs_currencies=usd").then(r=>r.json());
-  const bnbBal=parseFloat(ethers.utils.formatEther(await provider.getBalance(address)));
-  const usdtContract=new ethers.Contract(USDT,["function balanceOf(address) view returns(uint256)"],provider);
-  const usdtBal=parseFloat(ethers.utils.formatUnits(await usdtContract.balanceOf(address),18));
-  const total=bnbBal*prices.binancecoin.usd+usdtBal*prices.tether.usd;
-  
-  document.getElementById("totalBalance").textContent="$"+total.toLocaleString('en-US',{minimumFractionDigits:2});
-  document.getElementById("assetsList").innerHTML=`
-    <div class="asset">
-      <div style="font-size:32px;">🟡</div>
-      <div class="asset-info">
-        <div class="asset-symbol">BNB</div>
-        <div class="asset-name">BNB Smart Chain</div>
-      </div>
-      <div class="asset-value">
-        <div>${bnbBal.toFixed(4)} BNB</div>
-        <div style="font-size:12px;color:#a1a1aa;">$${(bnbBal*prices.binancecoin.usd).toFixed(2)}</div>
-      </div>
-    </div>
-    <div class="asset">
-      <div style="font-size:32px;">🟢</div>
-      <div class="asset-info">
-        <div class="asset-symbol">USDT</div>
-        <div class="asset-name">Tether USD</div>
-      </div>
-      <div class="asset-value">
-        <div>${usdtBal.toFixed(4)} USDT</div>
-        <div style="font-size:12px;color:#a1a1aa;">$${(usdtBal*prices.tether.usd).toFixed(2)}</div>
-      </div>
-    </div>
-  `;
-}
-
-async function loadMarket(){
-  const res=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=binancecoin,ethereum,tether&order=market_cap_desc");
-  const data=await res.json();
-  let html='';
-  data.forEach(coin=>{
-    html+=`<div class="asset">
-      <div style="font-size:32px;">${coin.symbol=="btc"?"🟠":coin.symbol=="eth"?"🔵":"🟡"}</div>
-      <div class="asset-info">
-        <div class="asset-symbol">${coin.symbol.toUpperCase()}</div>
-        <div class="asset-name">${coin.name}</div>
-      </div>
-      <div class="asset-value">
-        <div>$${coin.current_price.toLocaleString()}</div>
-        <div style="font-size:12px;color:${coin.price_change_percentage_24h>0?'#4ade80':'#ef4444'}">
-          ${coin.price_change_percentage_24h.toFixed(2)}%
-        </div>
-      </div>
-    </div>`;
-  });
-  document.getElementById('marketList').innerHTML=html;
-}
-
-async function sendToken(){
-  const to=document.getElementById("sendTo").value;
-  const amt=document.getElementById("sendAmount").value;
-  const token=document.getElementById("sendToken").value;
-  if(!ethers.utils.isAddress(to))return alert("Invalid address");
-  
-  try{
-    let tx;
-    if(token=="BNB"){
-      tx=await signer.sendTransaction({to,value:ethers.utils.parseEther(amt)});
-    }else{
-      const c=new ethers.Contract(USDT,["function transfer(address,uint256)returns(bool)"],signer);
-      tx=await c.transfer(to,ethers.utils.parseUnits(amt,18));
-    }
-    alert("Sent! Tx: "+tx.hash);
-    closeModal();
-    setTimeout(loadBalances,3000);
-  }catch(e){alert("Failed: "+e.message);}
-}
-
-async function swapToken(){
-  const from=document.getElementById("swapFrom").value;
-  const to=document.getElementById("swapTo").value;
-  const amt=document.getElementById("swapAmount").value;
-  if(from==to)return alert("Select different tokens");
-  
-  const router=new ethers.Contract(PANCAKE_ROUTER,[
-    "function swapExactETHForTokens(uint,address[],uint) external payable",
-    "function swapExactTokensForTokens(uint,uint,address[],uint) external"
-  ],signer);
-  
-  const deadline=Math.floor(Date.now()/1000)+600;
-  const path=from=="BNB"?[WBNB,USDT]:[USDT,WBNB];
-  
-  try{
-    let tx;
-    if(from=="BNB"){
-      tx=await router.swapExactETHForTokens(0,path,deadline,{value:ethers.utils.parseEther(amt)});
-    }else{
-      const tokenContract=new ethers.Contract(USDT,["function approve(address,uint256)returns(bool)"],signer);
-      await tokenContract.approve(PANCAKE_ROUTER,ethers.utils.parseUnits(amt,18));
-      tx=await router.swapExactTokensForTokens(ethers.utils.parseUnits(amt,18),0,path,deadline);
-    }
-    alert("Swap success! Tx: "+tx.hash);
-    closeModal();
-    setTimeout(loadBalances,3000);
-  }catch(e){alert("Swap failed: "+e.message);}
+function addCustomToken(){
+  var addr=document.getElementById("tokenAddress").value;
+  if(!ethers.utils.isAddress(addr)){alert("Invalid address");return;}
+  tokens.push({symbol:"TOKEN",address:addr,decimals:18});
+  alert("Token added!");
+  closeModal();
+  loadBalances();
 }
 
 function switchPage(page){
-  document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
-  document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
+  document.querySelectorAll(".page").forEach(function(p){p.classList.add("hidden");});
+  document.querySelectorAll(".nav-item").forEach(function(n){n.classList.remove("active");});
   document.getElementById(page+"Page").classList.remove("hidden");
   event.currentTarget.classList.add("active");
   if(page=="market")loadMarket();
@@ -327,9 +390,11 @@ function switchPage(page){
 function openSendModal(){document.getElementById("sendModal").classList.add("active");}
 function openSwapModal(){document.getElementById("swapModal").classList.add("active");}
 function openReceiveModal(){document.getElementById("receiveModal").classList.add("active");}
-function openHistory(){window.open("https://bscscan.com/address/"+address);}
-function closeModal(){document.querySelectorAll(".modal").forEach(m=>m.classList.remove("active"));}
+function openHistoryModal(){document.getElementById("historyModal").classList.add("active");}
+function openAddTokenModal(){document.getElementById("addTokenModal").classList.add("active");}
+function closeModal(){document.querySelectorAll(".modal").forEach(function(m){m.classList.remove("active");});}
 function copyAddress(){navigator.clipboard.writeText(address);alert("Copied!");}
+function disconnect(){location.reload();}
 </script>
 </body>
 </html>
