@@ -1,902 +1,125 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="ms">
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<title>MyTube Ultra Web3</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<!-- ETHERS JS -->
-
-<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
-
-<style>
-
-/* ========================= */
-/* RESET */
-/* ========================= */
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-}
-
-body{
-
-background:
-linear-gradient(
-180deg,
-#050505,
-#101010
-);
-
-color:white;
-
-overflow-x:hidden;
-
-padding-bottom:120px;
-
-}
-
-/* ========================= */
-/* HEADER */
-/* ========================= */
-
-.header{
-
-display:flex;
-justify-content:space-between;
-align-items:center;
-
-padding:18px 16px;
-
-}
-
-.logo{
-
-font-size:34px;
-font-weight:700;
-
-}
-
-.logo span{
-color:#ff0033;
-}
-
-.top-icons{
-
-display:flex;
-gap:12px;
-
-}
-
-.icon-btn{
-
-width:42px;
-height:42px;
-
-border-radius:50%;
-
-background:
-rgba(255,255,255,0.05);
-
-display:flex;
-justify-content:center;
-align-items:center;
-
-font-size:18px;
-
-}
-
-/* ========================= */
-/* CATEGORY */
-/* ========================= */
-
-.categories{
-
-display:flex;
-overflow-x:auto;
-
-gap:12px;
-
-padding:0 16px 16px;
-
-}
-
-.categories::-webkit-scrollbar{
-display:none;
-}
-
-.cat{
-
-padding:11px 18px;
-
-border-radius:14px;
-
-background:
-rgba(255,255,255,0.06);
-
-white-space:nowrap;
-
-font-size:14px;
-
-}
-
-.cat.active{
-
-background:white;
-color:black;
-font-weight:700;
-
-}
-
-/* ========================= */
-/* WALLET */
-/* ========================= */
-
-.wallet-card{
-
-margin:0 16px 22px;
-
-padding:28px;
-
-border-radius:34px;
-
-background:
-linear-gradient(
-135deg,
-#6a00ff,
-#00bfff
-);
-
-position:relative;
-overflow:hidden;
-
-box-shadow:
-0 0 40px rgba(0,191,255,0.25);
-
-}
-
-.wallet-card::before{
-
-content:"";
-
-position:absolute;
-
-width:240px;
-height:240px;
-
-border-radius:50%;
-
-background:
-rgba(255,255,255,0.1);
-
-top:-100px;
-right:-80px;
-
-}
-
-.wallet-title{
-
-font-size:15px;
-opacity:0.85;
-margin-bottom:10px;
-
-}
-
-.wallet-balance{
-
-font-size:48px;
-font-weight:700;
-
-margin-bottom:10px;
-
-}
-
-.wallet-address{
-
-font-size:12px;
-opacity:0.9;
-
-word-break:break-all;
-
-}
-
-.connect-btn{
-
-margin-top:22px;
-
-width:100%;
-padding:16px;
-
-border:none;
-border-radius:18px;
-
-font-size:16px;
-font-weight:700;
-
-background:
-linear-gradient(
-135deg,
-#ff0033,
-#ff6600
-);
-
-color:white;
-
-}
-
-/* ========================= */
-/* STATUS */
-/* ========================= */
-
-.status{
-
-margin-top:15px;
-font-size:14px;
-
-color:#00ff88;
-
-}
-
-/* ========================= */
-/* TOKEN */
-/* ========================= */
-
-.token-card{
-
-margin:0 16px 16px;
-
-padding:18px;
-
-border-radius:22px;
-
-background:
-rgba(255,255,255,0.04);
-
-border:
-1px solid rgba(255,255,255,0.05);
-
-display:flex;
-justify-content:space-between;
-align-items:center;
-
-}
-
-.token-left{
-
-display:flex;
-align-items:center;
-gap:14px;
-
-}
-
-.token-icon{
-
-width:48px;
-height:48px;
-
-border-radius:50%;
-
-display:flex;
-justify-content:center;
-align-items:center;
-
-font-size:22px;
-
-}
-
-.bnb{
-background:#f3ba2f;
-color:black;
-}
-
-.myt{
-background:#ff0033;
-}
-
-/* ========================= */
-/* SECTION */
-/* ========================= */
-
-.section-title{
-
-font-size:24px;
-font-weight:700;
-
-padding:0 16px;
-margin:25px 0 15px;
-
-}
-
-/* ========================= */
-/* VIDEO */
-/* ========================= */
-
-.video-card{
-
-margin:0 16px 20px;
-
-background:
-rgba(255,255,255,0.04);
-
-border:
-1px solid rgba(255,255,255,0.05);
-
-border-radius:24px;
-
-overflow:hidden;
-
-}
-
-.video-thumb{
-
-width:100%;
-height:220px;
-
-object-fit:cover;
-
-}
-
-.video-info{
-
-display:flex;
-gap:12px;
-
-padding:14px;
-
-}
-
-.channel{
-
-width:45px;
-height:45px;
-
-border-radius:50%;
-
-background:
-linear-gradient(
-135deg,
-#ff0033,
-#6a00ff
-);
-
-display:flex;
-justify-content:center;
-align-items:center;
-
-font-size:20px;
-
-}
-
-.video-title{
-
-font-size:16px;
-font-weight:600;
-
-line-height:1.4;
-
-}
-
-.video-meta{
-
-font-size:13px;
-color:#999;
-margin-top:5px;
-
-}
-
-/* ========================= */
-/* MINI PLAYER */
-/* ========================= */
-
-.mini-player{
-
-position:fixed;
-
-bottom:78px;
-left:10px;
-right:10px;
-
-background:#181818;
-
-border-radius:20px;
-
-padding:10px;
-
-display:flex;
-align-items:center;
-
-gap:12px;
-
-z-index:999;
-
-box-shadow:
-0 0 30px rgba(0,0,0,0.5);
-
-}
-
-.mini-player img{
-
-width:90px;
-height:60px;
-
-border-radius:12px;
-object-fit:cover;
-
-}
-
-.mini-title{
-
-font-size:14px;
-font-weight:600;
-
-}
-
-/* ========================= */
-/* NAVIGATION */
-/* ========================= */
-
-.bottom-nav{
-
-position:fixed;
-bottom:0;
-left:0;
-
-width:100%;
-
-background:
-rgba(5,5,5,0.95);
-
-backdrop-filter:blur(15px);
-
-display:flex;
-justify-content:space-around;
-
-padding:12px 0;
-
-border-top:
-1px solid rgba(255,255,255,0.05);
-
-z-index:999;
-
-}
-
-.nav-btn{
-
-display:flex;
-flex-direction:column;
-align-items:center;
-
-gap:5px;
-
-font-size:12px;
-
-}
-
-.nav-icon{
-
-font-size:24px;
-
-}
-
-.plus-btn{
-
-width:65px;
-height:65px;
-
-border-radius:50%;
-
-background:
-linear-gradient(
-135deg,
-#ff0033,
-#ff6600
-);
-
-display:flex;
-justify-content:center;
-align-items:center;
-
-font-size:34px;
-
-margin-top:-30px;
-
-box-shadow:
-0 0 30px rgba(255,0,0,0.4);
-
-}
-
-</style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyTube</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f0f0f;
+      color: white;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .logo span { color: red; }
+    .wallet-card {
+      margin: 16px;
+      padding: 20px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #6e8efb, #a777e3);
+    }
+    .wallet-card button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: #ff3b30;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .error {
+      color: #ff3b30;
+      margin-top: 8px;
+    }
+    .success {
+      color: #4caf50;
+      margin-top: 8px;
+    }
+  </style>
 </head>
-
 <body>
 
-<!-- HEADER -->
-
-<div class="header">
-
-<div class="logo">
-My<span>Tube</span>
-</div>
-
-<div class="top-icons">
-
-<div class="icon-btn">
-🔔
-</div>
-
-<div class="icon-btn">
-🔍
-</div>
-
-<div class="icon-btn">
-👤
-</div>
-
-</div>
-
-</div>
-
-<!-- CATEGORY -->
-
-<div class="categories">
-
-<div class="cat active">
-Semua
-</div>
-
-<div class="cat">
-Gaming
-</div>
-
-<div class="cat">
-Music
-</div>
-
-<div class="cat">
-Live
-</div>
-
-<div class="cat">
-Crypto
-</div>
-
-<div class="cat">
-Anime
-</div>
-
-</div>
-
-<!-- WALLET -->
-
-<div class="wallet-card">
-
-<div class="wallet-title">
-Wallet Balance
-</div>
-
-<div
-class="wallet-balance"
-id="bnbBalance">
-
-0 BNB
-
-</div>
-
-<div
-class="wallet-address"
-id="walletAddress">
-
-Wallet not connected
-
-</div>
-
-<button
-class="connect-btn"
-onclick="connectWallet()">
-
-Connect Wallet
-
-</button>
-
-<div
-class="status"
-id="statusText">
-
-</div>
-
-</div>
-
-<!-- TOKENS -->
-
-<div class="token-card">
-
-<div class="token-left">
-
-<div class="token-icon bnb">
-🟡
-</div>
-
-<div>
-
-<div>
-BNB
-</div>
-
-<div style="font-size:13px;color:#999;">
-BNB Smart Chain
-</div>
-
-</div>
-
-</div>
-
-<div id="bnbToken">
-0
-</div>
-
-</div>
-
-<div class="token-card">
-
-<div class="token-left">
-
-<div class="token-icon myt">
-🔥
-</div>
-
-<div>
-
-<div>
-MYT Coin
-</div>
-
-<div style="font-size:13px;color:#999;">
-MyTube Token
-</div>
-
-</div>
-
-</div>
-
-<div>
-25,000
-</div>
-
-</div>
-
-<!-- VIDEO -->
-
-<div class="section-title">
-🔥 Trending
-</div>
-
-<div class="video-card">
-
-<img
-class="video-thumb"
-src="https://i.ytimg.com/vi/9bZkp7q19f0/maxresdefault.jpg">
-
-<div class="video-info">
-
-<div class="channel">
-🎬
-</div>
-
-<div>
-
-<div class="video-title">
-PSY - Gangnam Style
-</div>
-
-<div class="video-meta">
-1.2B views • 10 years ago
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- MINI PLAYER -->
-
-<div class="mini-player">
-
-<img
-src="https://i.ytimg.com/vi/9bZkp7q19f0/maxresdefault.jpg">
-
-<div>
-
-<div class="mini-title">
-PSY - Gangnam Style
-</div>
-
-<div style="font-size:12px;color:#999;">
-Playing on MyTube
-</div>
-
-</div>
-
-</div>
-
-<!-- NAV -->
-
-<div class="bottom-nav">
-
-<div class="nav-btn">
-
-<div class="nav-icon">
-🏠
-</div>
-
-<div>
-Home
-</div>
-
-</div>
-
-<div class="nav-btn">
-
-<div class="nav-icon">
-🎬
-</div>
-
-<div>
-Shorts
-</div>
-
-</div>
-
-<div class="plus-btn">
-+
-</div>
-
-<div class="nav-btn">
-
-<div class="nav-icon">
-💰
-</div>
-
-<div>
-Wallet
-</div>
-
-</div>
-
-<div class="nav-btn">
-
-<div class="nav-icon">
-👤
-</div>
-
-<div>
-You
-</div>
-
-</div>
-
-</div>
-
-<script>
-
-/* ========================= */
-/* CHECK ETHERS */
-/* ========================= */
-
-console.log("ETHERS:",
-typeof ethers);
-
-/* ========================= */
-/* WEB3 */
-/* ========================= */
-
-let provider;
-let signer;
-
-async function connectWallet(){
-
-const status =
-document.getElementById(
-"statusText"
-);
-
-try{
-
-status.innerText =
-"⏳ Connecting Wallet...";
-
-if(typeof ethers === "undefined"){
-
-status.innerText =
-"❌ Ethers.js Not Loaded";
-
-return;
-
-}
-
-if(typeof window.ethereum ===
-"undefined"){
-
-status.innerText =
-"❌ Trust Wallet Not Found";
-
-return;
-
-}
-
-await window.ethereum.request({
-
-method:
-"eth_requestAccounts"
-
-});
-
-provider =
-new ethers.providers.Web3Provider(
-window.ethereum
-);
-
-signer =
-provider.getSigner();
-
-const address =
-await signer.getAddress();
-
-document.getElementById(
-"walletAddress"
-).innerText =
-address;
-
-const balanceWei =
-await provider.getBalance(
-address
-);
-
-const balance =
-ethers.utils.formatEther(
-balanceWei
-);
-
-document.getElementById(
-"bnbBalance"
-).innerText =
-parseFloat(balance).toFixed(4)
-+ " BNB";
-
-document.getElementById(
-"bnbToken"
-).innerText =
-parseFloat(balance).toFixed(4);
-
-status.innerText =
-"✅ Wallet Connected";
-
-console.log(address);
-
-}
-catch(err){
-
-console.log(err);
-
-status.innerText =
-"❌ " + err.message;
-
-}
-
-}
-
-</script>
-
+  <header>
+    <div class="logo">My<span>Tube</span></div>
+  </header>
+
+  <div class="wallet-card">
+    <div>Wallet Balance</div>
+    <h1 id="balance">0 BNB</h1>
+    <div id="walletStatus">Wallet not connected</div>
+    <button id="connectBtn">Connect Wallet</button>
+    <div id="statusMsg" class="error"></div>
+  </div>
+
+  <!-- Ethers.js v5 CDN - ni yang penting -->
+  <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js" 
+          type="application/javascript"></script>
+
+  <script>
+    const connectBtn = document.getElementById("connectBtn");
+    const balanceEl = document.getElementById("balance");
+    const walletStatus = document.getElementById("walletStatus");
+    const statusMsg = document.getElementById("statusMsg");
+
+    let provider, signer, userAddress;
+
+    // Check kalau ethers dah load
+    window.addEventListener('load', () => {
+      if (typeof ethers === 'undefined') {
+        statusMsg.textContent = "Ethers.js Not Loaded";
+        statusMsg.className = "error";
+      } else {
+        statusMsg.textContent = "Ethers.js Loaded ✓";
+        statusMsg.className = "success";
+      }
+    });
+
+    connectBtn.addEventListener("click", async () => {
+      if (typeof window.ethereum === 'undefined') {
+        statusMsg.textContent = "Install MetaMask dulu";
+        statusMsg.className = "error";
+        return;
+      }
+
+      try {
+        statusMsg.textContent = "Connecting...";
+        statusMsg.className = "";
+
+        // Request account access
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        signer = provider.getSigner();
+        userAddress = await signer.getAddress();
+
+        walletStatus.textContent = `Connected: ${userAddress.slice(0,6)}...${userAddress.slice(-4)}`;
+        
+        // Get BNB balance
+        const balance = await provider.getBalance(userAddress);
+        const balanceInBNB = ethers.utils.formatEther(balance);
+        balanceEl.textContent = `${parseFloat(balanceInBNB).toFixed(4)} BNB`;
+
+        statusMsg.textContent = "Wallet connected!";
+        statusMsg.className = "success";
+
+      } catch (err) {
+        console.error(err);
+        statusMsg.textContent = "Connection failed: " + err.message;
+        statusMsg.className = "error";
+      }
+    });
+  </script>
 </body>
 </html>
