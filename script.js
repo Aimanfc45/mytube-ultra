@@ -1,356 +1,310 @@
 /**
- * MYTUBE ULTRA - FASA 7: MINI PLAYER ENGINE & TRANSITION STATE
+ * MYTUBE STREAMER ENGINE - INTEGRATED WITH YOUTUBE DATA API V3
  */
 
 const GOOGLE_CLIENT_ID = "309375289757-lr6vj8d7husgekf5mjgdglka7mau3due.apps.googleusercontent.com";
+// API KEY yang kau bekalkan untuk tarik data real-time
 const API_KEY = 'AIzaSyB7qeOTeXcF53s_mOT6cKewZh3drRjKYy8'; 
 
-let ytPlayer;
-let globalVideos = [];
+let ytPlayer = null;
 let isLiked = false;
 let isSubscribed = false;
 let isLoggedIn = false;
-let isMiniPlayerActive = false; // Status jejak keadaan mini player
-let currentPlayingIndex = -1;   // Menyimpan index video aktif semasa
+let currentPlayingVideoId = "";
+let fetchedVideos = [];
 
-// Muatkan API YouTube Player
-const tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
-const firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+// Sandaran (Fallback Data) sekiranya kuota API Key tamat atau ralat jaringan
+const backupVideos = [
+    {
+        id: "pXhTshZ6g_I",
+        title: "[EPISOD PENUH] LEMANG SI BUJANG SEPAH (Jep, Mamat, & Shuib) | THROWBACK TELEMOVIE GEMPAK RAYA",
+        channel: "TV3Malaysia Official",
+        views: "4.1J tontonan",
+        time: "7 tahun lalu",
+        duration: "1:12:23",
+        thumb: "https://images.unsplash.com/photo-1534080391025-497996894002?w=500&q=80",
+        channelPfp: "https://api.dicebear.com/7.x/identicon/svg?seed=tv3"
+    },
+    {
+        id: "vX2cDW899pY",
+        title: "Gandingan Shuk & Elly Mazlein buat penonton tak berhenti gelak! | #ASK2018",
+        channel: "TV3Malaysia Official",
+        views: "890K tontonan",
+        time: "2 hari lalu",
+        duration: "7:23",
+        thumb: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=500&q=80",
+        channelPfp: "https://api.dicebear.com/7.x/identicon/svg?seed=tv3"
+    }
+];
 
-window.onYouTubeIframeAPIReady = function() {
-    console.log("YouTube Player API sedia.");
-};
+const mockShorts = [
+    { title: "Goku Ultra Instinct Mode 🔥", views: "1.2M tontonan", img: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=400&q=80" },
+    { title: "Cute Meow Meow Dance 🐱", views: "3.4M tontonan", img: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&q=80" },
+    { title: "Gojo Satoru Domain Expansion ⚡", views: "2.7M tontonan", img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400&q=80" }
+];
 
-// INITIALIZE APP & GOOGLE IDENTITY SERVICES
+// === COIN WALLET CONTROL ===
+let currentCoins = parseInt(localStorage.getItem('shared_coins')) || 0;
+
+function updateCoinDashboard() {
+    localStorage.setItem('shared_coins', currentCoins); 
+    const coinDisplay = document.getElementById('coin-balance');
+    const rmDisplay = document.getElementById('rm-balance');
+    
+    if (coinDisplay) coinDisplay.innerHTML = `<i class="fa-solid fa-star"></i> ${currentCoins.toLocaleString()} COIN`;
+    if (rmDisplay) {
+        let estRM = currentCoins / 1000;
+        rmDisplay.innerText = `Anggaran: RM ${estRM.toFixed(2)}`;
+    }
+}
+
+function popRewardAlert(message) {
+    const alertBox = document.getElementById('task-alert');
+    if (alertBox) {
+        alertBox.innerText = message;
+        alertBox.style.display = 'block';
+        setTimeout(() => { alertBox.style.display = 'none'; }, 2500);
+    }
+}
+
+// === INITIALIZATION ===
 window.onload = function () {
+    fetchYouTubeVideos(); // Fungsi baru menarik data menggunakan API Key kau
+    renderShortsGrid();
+    updateCoinDashboard();
+    setupButtonActions();
     initGoogleSignInEngine();
-    setupAllButtonListeners();
-    setupMiniPlayerActionListeners();
-    loadVideos(); 
+    updateProfileMenuUI();
 };
 
-// Fungsi memulakan enjin Google Sign-In
-function initGoogleSignInEngine() {
-    if (typeof google !== 'undefined') {
-        google.accounts.id.initialize({
-            client_id: GOOGLE_CLIENT_ID,
-            callback: handleCredentialResponse
-        });
-        
-        google.accounts.id.renderButton(
-            document.getElementById("google-login-trigger"),
-            { theme: "outline", size: "small", type: "icon", shape: "circle" } 
-        );
-        
-        google.accounts.id.prompt();
-    }
-}
-
-function handleCredentialResponse(response) {
-    const responsePayload = parseJwt(response.credential);
-    if (responsePayload && responsePayload.picture) {
-        isLoggedIn = true;
-        document.getElementById('user-avatar').src = responsePayload.picture;
-        document.getElementById('nav-user-avatar').src = responsePayload.picture;
-        document.getElementById('user-avatar').style.border = "2px solid #00ff00"; 
-        
-        document.getElementById('menu-large-avatar').src = responsePayload.picture;
-        document.getElementById('menu-user-name').innerText = responsePayload.name;
-        document.getElementById('menu-user-email').innerText = responsePayload.email;
-
-        document.getElementById('google-login-trigger').style.display = "none";
-        document.getElementById('user-avatar').onclick = () => {
-            document.getElementById('user-profile-menu').classList.remove('hidden-profile-menu');
-        };
-        alert(`Selamat datang, ${responsePayload.name}! Log masuk berjaya.`);
-    }
-}
-
-function parseJwt (token) {
-    var base64Url = token.split('.')[1];
-    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-    return JSON.parse(jsonPayload);
-}
-
-function logoutUserAccount() {
-    isLoggedIn = false;
-    const defaultAvatar = "https://www.w3schools.com/howto/img_avatar.png";
-    document.getElementById('user-avatar').src = defaultAvatar;
-    document.getElementById('nav-user-avatar').src = defaultAvatar;
-    document.getElementById('user-avatar').style.border = "2px solid #ff0000"; 
-    
-    document.getElementById('menu-large-avatar').src = defaultAvatar;
-    document.getElementById('menu-user-name').innerText = "Tetamu (Guest)";
-    document.getElementById('menu-user-email').innerText = "Sila log masuk untuk simpan rekod";
-
-    document.getElementById('google-login-trigger').style.display = "block";
-    document.getElementById('user-profile-menu').classList.add('hidden-profile-menu');
-    alert("Kau telah berjaya log keluar daripada aplikasi.");
-}
-
-// AMBIL DATA VIDEO DARI YOUTUBE DATA API V3
-async function loadVideos(query = "") {
-    const container = document.getElementById('video-container');
-    container.innerHTML = "<p style='padding:20px; color:#aaa;'>Memuatkan video...</p>";
-
-    const baseUrl = "https://www.googleapis.com/youtube/v3/";
-    const endpoint = query ? "search" : "videos";
-    
-    const url = query ? 
-        `${baseUrl}${endpoint}?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=10&key=${API_KEY}` :
-        `${baseUrl}${endpoint}?part=snippet&chart=mostPopular&regionCode=MY&maxResults=10&key=${API_KEY}`;
-    
-    try {
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data.error) {
-            container.innerHTML = `<p style='padding:20px; color:red;'>Ralat API: ${data.error.message}</p>`;
-            return;
-        }
-        globalVideos = data.items || [];
-        renderVideoGrid();
-    } catch (err) {
-        container.innerHTML = "<p style='padding:20px; color:red;'>Ralat Rangkaian.</p>";
-    }
-}
-
-function renderVideoGrid() {
+// MENGGUNAKAN API KEY UNTUK TARIK VIDEO POPULAR DARI YOUTUBE DATA API
+async function fetchYouTubeVideos() {
     const container = document.getElementById('video-container');
     if (!container) return;
-    if (globalVideos.length === 0) {
-        container.innerHTML = "<p style='padding:20px;'>Tiada video ditemui.</p>";
-        return;
+
+    // Menarik senarai video paling trending/popular (Region: MY)
+    const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&chart=mostPopular&regionCode=MY&maxResults=5&key=${API_KEY}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.items && data.items.length > 0) {
+            fetchedVideos = data.items.map(item => {
+                // Penukaran format durasi ISO 8601 (Contoh: PT1M30S -> 1:30)
+                let duration = item.contentDetails.duration.replace('PT', '').replace('H', ':').replace('M', ':').replace('S', '');
+                
+                return {
+                    id: item.id,
+                    title: item.snippet.title,
+                    channel: item.snippet.channelTitle,
+                    views: parseInt(item.statistics.viewCount).toLocaleString() + " tontonan",
+                    time: "Terkini",
+                    duration: duration || "Video",
+                    thumb: item.snippet.thumbnails.high ? item.snippet.thumbnails.high.url : item.snippet.thumbnails.medium.url,
+                    channelPfp: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(item.snippet.channelTitle)}`
+                };
+            });
+            renderMainVideos(fetchedVideos);
+        } else {
+            // Jika API tiada data, gunakan backup data
+            fetchedVideos = backupVideos;
+            renderMainVideos(fetchedVideos);
+        }
+    } catch (error) {
+        console.error("Ralat YouTube API: Menggunakan data sandaran.", error);
+        fetchedVideos = backupVideos;
+        renderMainVideos(fetchedVideos);
     }
-    container.innerHTML = globalVideos.map((v, i) => {
-        const thumbUrl = v.snippet.thumbnails?.high?.url || v.snippet.thumbnails?.default?.url;
-        return `
-            <div class="video-card" onclick="bukaPlayer(${i})">
-                <div class="thumbnail-box">
-                    <img src="${thumbUrl}" alt="thumbnail">
-                </div>
-                <h4 class="video-title">${v.snippet.title}</h4>
-            </div>
-        `;
-    }).join('');
 }
 
-// BUKA VIDEO PLAYER (SISTEM PERALIHAN LANCAR)
-function bukaPlayer(i) {
-    const v = globalVideos[i];
-    if (!v) return;
+function renderMainVideos(videosList) {
+    const container = document.getElementById('video-container');
+    if (!container) return;
+    
+    container.innerHTML = videosList.map((v, i) => `
+        <div class="v-card" onclick="bukaPlayerAction(${i})">
+            <div class="thumb-holder">
+                <img src="${v.thumb}" alt="thumbnail">
+                <span class="duration-badge">${v.duration}</span>
+                ${i === 0 ? '<span class="live-badge">🔴 Live</span>' : ''}
+            </div>
+            <div class="v-meta">
+                <img src="${v.channelPfp}" class="ch-pfp">
+                <div class="v-text">
+                    <h4 class="v-title">${v.title}</h4>
+                    <p class="v-subtext">${v.channel} • ${v.views}</p>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
 
-    currentPlayingIndex = i;
+function renderShortsGrid() {
+    const container = document.getElementById('shorts-container');
+    if (!container) return;
+    
+    container.innerHTML = mockShorts.map(s => `
+        <div class="s-card" onclick="alert('Misi Shorts: Tonton video Shorts selama 15 saat untuk claim token ganjaran!')">
+            <img src="${s.img}" alt="shorts">
+            <div class="s-overlay">
+                <h4 class="s-title">${s.title}</h4>
+                <span class="s-views">${s.views}</span>
+            </div>
+        </div>
+    `).join('');
+}
 
-    // Fasa Bonus: Padam terus Mini Player lama jika ada video baru dipilih
-    tutupMiniPlayerEngine();
+// === INTEGRASI API YOUTUBE IFRAME ===
+const tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+document.head.appendChild(tag);
 
-    let id = (v.id && typeof v.id === 'object') ? v.id.videoId : v.id;
-    if (!id && v.snippet?.resourceId) id = v.snippet.resourceId.videoId;
-
-    // Kembalikan elemen Iframe Player ke dalam Kotak Player Skrin Besar
-    const mainWrapper = document.getElementById('main-player-wrapper');
-    const playerElement = document.getElementById('youtube-api-player');
-    mainWrapper.appendChild(playerElement);
-
-    resetButtonStates();
-    document.getElementById('video-player-screen').classList.remove('hidden-screen');
-    document.getElementById('player-video-title').innerText = v.snippet.title;
-
-    if (!ytPlayer) {
+function onYouTubeIframeAPIReady() {
+    // Sediakan pemain asas menggunakan ID pertama daripada senarai video
+    setTimeout(() => {
+        const startId = (fetchedVideos.length > 0) ? fetchedVideos[0].id : "pXhTshZ6g_I";
         ytPlayer = new YT.Player('youtube-api-player', {
             height: '100%',
             width: '100%',
-            videoId: id,
-            playerVars: { 'autoplay': 1, 'controls': 1, 'fs': 1, 'playsinline': 1 },
-            events: {
-                'onStateChange': onPlayerStateChange
+            videoId: startId, 
+            playerVars: { 
+                'autoplay': 0, 
+                'controls': 1, 
+                'playsinline': 1, 
+                'rel': 0, 
+                'modestbranding': 1   
             }
         });
-    } else {
-        ytPlayer.loadVideoById(id);
-    }
+    }, 800);
 }
 
-// Jejak perubahan status untuk menukar butang Play/Pause secara automatik
-function onPlayerStateChange(event) {
-    const playPauseBtn = document.getElementById('mini-btn-play-pause');
-    if (event.data == YT.PlayerState.PLAYING) {
-        playPauseBtn.innerHTML = `<i class="fas fa-pause"></i>`;
-    } else if (event.data == YT.PlayerState.PAUSED) {
-        playPauseBtn.innerHTML = `<i class="fas fa-play"></i>`;
-    }
-}
+function bukaPlayerAction(index) {
+    const data = fetchedVideos[index];
+    if (!data) return;
 
-// LOGIK KAWALAN MINI PLAYER ENGINE
-function tukarKeMiniPlayer() {
-    if (currentPlayingIndex === -1 || !ytPlayer) return;
+    currentPlayingVideoId = data.id;
+    resetTaskButtons();
 
-    const v = globalVideos[currentPlayingIndex];
-    
-    // 1. Sorok skrin player besar
-    document.getElementById('video-player-screen').classList.add('hidden-screen');
-
-    // 2. Isi data tajuk & saluran pada mini player
-    document.getElementById('mini-player-title').innerText = v.snippet.title;
-    document.getElementById('mini-player-channel').innerText = v.snippet.channelTitle || "Saluran YouTube";
-
-    // 3. Pindahkan fizikal elemen Iframe Player masuk ke dalam slot mini player box
-    const miniSlot = document.getElementById('mini-player-click-zone');
-    const playerElement = document.getElementById('youtube-api-player');
-    miniSlot.appendChild(playerElement);
-
-    // 4. Paparkan kotak mini player terapung
-    document.getElementById('mini-player-box').classList.remove('hidden-mini-player');
-    isMiniPlayerActive = true;
-}
-
-function kembalikanKeMaxPlayer() {
-    if (currentPlayingIndex === -1) return;
-
-    // 1. Sorok mini player box
-    document.getElementById('mini-player-box').classList.add('hidden-mini-player');
-    isMiniPlayerActive = false;
-
-    // 2. Ambil balik elemen Iframe masukkan ke slot asal skrin besar
-    const mainWrapper = document.getElementById('main-player-wrapper');
-    const playerElement = document.getElementById('youtube-api-player');
-    mainWrapper.appendChild(playerElement);
-
-    // 3. Naikkan semula skrin besar
     document.getElementById('video-player-screen').classList.remove('hidden-screen');
-}
+    document.getElementById('player-video-title').innerText = data.title;
 
-function tutupMiniPlayerEngine() {
-    document.getElementById('mini-player-box').classList.add('hidden-mini-player');
-    isMiniPlayerActive = false;
-}
-
-function setupMiniPlayerActionListeners() {
-    // Klik kawasan teks mini player atau kawasan video untuk besarkan skrin semula
-    document.getElementById('mini-expand-trigger').onclick = () => kembalikanKeMaxPlayer();
-    
-    // Butang main/jeda pantas pada mini player
-    document.getElementById('mini-btn-play-pause').onclick = function(e) {
-        e.stopPropagation(); // Elakkan tercetusnya trigger klik besarkan skrin
-        if (!ytPlayer || typeof ytPlayer.getPlayerState !== 'function') return;
-
-        const state = ytPlayer.getPlayerState();
-        if (state == YT.PlayerState.PLAYING) {
-            ytPlayer.pauseVideo();
-            this.innerHTML = `<i class="fas fa-play"></i>`;
-        } else {
-            ytPlayer.playVideo();
-            this.innerHTML = `<i class="fas fa-pause"></i>`;
-        }
-    };
-
-    // Butang X tutup mini player sepenuhnya
-    document.getElementById('mini-btn-close').onclick = function(e) {
-        e.stopPropagation();
-        tutupMiniPlayerEngine();
-        if (ytPlayer && typeof ytPlayer.stopVideo === 'function') ytPlayer.stopVideo();
-        currentPlayingIndex = -1;
-    };
-}
-
-// LOGIK KAWALAN BUTANG INTERAKTIF UI ASAL
-function setupAllButtonListeners() {
-    document.getElementById('search-submit-btn').onclick = () => {
-        const queryValue = document.getElementById('search-input').value;
-        if(queryValue.trim() !== "") loadVideos(queryValue);
-    };
-
-    document.getElementById('search-input').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter' && this.value.trim() !== "") loadVideos(this.value);
-    });
-
-    const catButtons = document.querySelectorAll('.category-bar .cat-btn');
-    catButtons.forEach(btn => {
-        btn.onclick = function() {
-            catButtons.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            const topic = this.getAttribute('data-topic');
-            loadVideos(topic === "Semua" || topic === "Trending" ? "" : topic);
-        };
-    });
-
-    document.getElementById('close-profile-btn').onclick = () => {
-        document.getElementById('user-profile-menu').classList.add('hidden-profile-menu');
-    };
-    
-    document.getElementById('btn-logout-google').onclick = () => logoutUserAccount();
-
-    const navItems = document.querySelectorAll('.bottom-nav .nav-item:not(.add-button)');
-    navItems.forEach(item => {
-        item.onclick = function() {
-            navItems.forEach(i => i.classList.remove('active'));
-            this.classList.add('active');
-            
-            const page = this.getAttribute('data-page');
-            const container = document.getElementById('video-container');
-            
-            if (page === "utama") {
-                loadVideos("");
-            } else if (page === "anda") {
-                if (isLoggedIn) {
-                    document.getElementById('user-profile-menu').classList.remove('hidden-profile-menu');
-                } else {
-                    alert("Sila klik imej profil di atas kanan untuk log masuk dahulu.");
-                }
-            } else {
-                container.innerHTML = `<div style="padding:40px; text-align:center; color:#aaa;">
-                    <i class="fas fa-folder-open" style="font-size:30px; margin-bottom:10px;"></i>
-                    <p>Halaman ${page.toUpperCase()} sedang dibangunkan.</p>
-                </div>`;
+    if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
+        ytPlayer.loadVideoById({
+            videoId: data.id,
+            startSeconds: 0
+        });
+    } else {
+        setTimeout(() => {
+            if (ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
+                ytPlayer.loadVideoById(data.id);
             }
-        };
-    });
+        }, 300);
+    }
+}
 
-    document.getElementById('btn-tambah-video').onclick = () => alert("Fungsi memuat naik Video/Shorts akan datang!");
-    document.getElementById('btn-menu').onclick = () => alert("Menu Sisi dibuka.");
-    document.getElementById('btn-logo').onclick = () => loadVideos("");
-    document.getElementById('btn-cast').onclick = () => alert("Mencari peranti paparan skrin (Screencast)...");
-    document.getElementById('btn-notification').onclick = () => alert("Tiada pemberitahuan baharu buat masa ini.");
+function hidePlayerScreen() {
+    document.getElementById('video-player-screen').classList.add('hidden-screen');
+}
 
-    // KEMAS KINI BUTANG MINIMIZE: Tukar kepada fungsi mini player terapung
-    document.getElementById('minimize-player-btn').onclick = () => {
-        tukarKeMiniPlayer();
-    };
+function stopVideoSaja() {
+    hidePlayerScreen();
+    if (ytPlayer && typeof ytPlayer.stopVideo === 'function') ytPlayer.stopVideo();
+}
 
-    // Butang tutup X di skrin besar akan terus matikan video sepenuhnya
-    document.getElementById('close-player-btn').onclick = () => {
-        document.getElementById('video-player-screen').classList.add('hidden-screen');
-        if (ytPlayer && typeof ytPlayer.stopVideo === 'function') ytPlayer.stopVideo();
-        currentPlayingIndex = -1;
-    };
+function showMainPage() {
+    hidePlayerScreen();
+}
 
-    document.getElementById('btn-sertai').onclick = () => alert("Terima kasih! Fungsi 'Sertai' keahlian saluran akan dibuka tidak lama lagi.");
-
+// === ACTION BUTTON LOGIC ===
+function setupButtonActions() {
     document.getElementById('btn-subscribe').onclick = function() {
-        isSubscribed = !isSubscribed;
-        this.innerHTML = isSubscribed ? `<i class="fas fa-check"></i> Telah Dilanggan` : `<i class="fas fa-bell"></i> Langgan`;
-        this.style.backgroundColor = isSubscribed ? "#3f3f3f" : "#cc0000";
+        if (!isSubscribed) {
+            currentCoins += 500;
+            updateCoinDashboard();
+            popRewardAlert("🎉 Task Sukses! +500 COIN dimasukkan ke Wallet!");
+            this.innerHTML = `<i class="fas fa-check"></i> Telah Dilanggan (Selesai ✓)`;
+            this.style.backgroundColor = "#222";
+            this.style.color = "#00cc66";
+            isSubscribed = true;
+        }
     };
 
     document.getElementById('btn-like').onclick = function() {
         isLiked = !isLiked;
-        this.innerHTML = isLiked ? `<i class="fas fa-thumbs-up"></i> 14,001` : `<i class="fas fa-thumbs-up"></i> 14K`;
-        this.style.backgroundColor = isLiked ? "#0056b3" : "#272727";
+        this.innerHTML = isLiked ? `<i class="fas fa-thumbs-up" style="color:#00ff00;"></i> 14,001` : `<i class="fas fa-thumbs-up"></i> 14K`;
+        this.style.backgroundColor = isLiked ? "#002211" : "#222";
     };
-
-    document.getElementById('btn-kongsi').onclick = () => alert("Pautan video telah berjaya disalin!");
 }
 
-function resetButtonStates() {
-    isLiked = false;
+function resetTaskButtons() {
     isSubscribed = false;
-    document.getElementById('btn-like').innerHTML = `<i class="fas fa-thumbs-up"></i> 14K`;
-    document.getElementById('btn-like').style.backgroundColor = "#272727";
-    document.getElementById('btn-subscribe').innerHTML = `<i class="fas fa-bell"></i> Langgan`;
-    document.getElementById('btn-subscribe').style.backgroundColor = "#cc0000";
+    isLiked = false;
+    const subBtn = document.getElementById('btn-subscribe');
+    subBtn.innerHTML = `🔴 SUBSCRIBE CHANNEL & CLAIM 500 COIN`;
+    subBtn.style.backgroundColor = "#cc0000";
+    subBtn.style.color = "#fff";
+}
+
+// === AUTHENTICATION PROFILE CONTROL ===
+function initGoogleSignInEngine() {
+    if (typeof google !== 'undefined') {
+        google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: handleGoogleLoginResponse
+        });
+    }
+}
+
+function updateProfileMenuUI() {
+    const actionArea = document.getElementById('profile-action-area');
+    if (!actionArea) return;
+
+    if (isLoggedIn) {
+        actionArea.innerHTML = `<button class="btn-logout-custom" onclick="logoutUserAccount()">Log Keluar</button>`;
+    } else {
+        actionArea.innerHTML = `<div id="google-modal-btn"></div>`;
+        setTimeout(() => {
+            if (typeof google !== 'undefined' && document.getElementById('google-modal-btn')) {
+                google.accounts.id.renderButton(
+                    document.getElementById("google-modal-btn"),
+                    { theme: "dark", size: "large", type: "standard", text: "signin_with" }
+                );
+            }
+        }, 100);
+    }
+}
+
+function handleGoogleLoginResponse(res) {
+    const payload = JSON.parse(atob(res.credential.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+    isLoggedIn = true;
+    
+    document.getElementById('user-avatar').src = payload.picture;
+    document.getElementById('nav-user-avatar').src = payload.picture;
+    document.getElementById('menu-large-avatar').src = payload.picture;
+    document.getElementById('menu-user-name').innerText = payload.name;
+    document.getElementById('menu-user-email').innerText = payload.email;
+    
+    updateProfileMenuUI();
+    toggleProfileMenu();
+    popRewardAlert(`Selamat Datang, ${payload.name}!`);
+}
+
+function toggleProfileMenu() {
+    document.getElementById('user-profile-menu').classList.toggle('hidden-screen');
+}
+
+function logoutUserAccount() {
+    isLoggedIn = false;
+    const def = "https://www.w3schools.com/howto/img_avatar.png";
+    
+    document.getElementById('user-avatar').src = def;
+    document.getElementById('nav-user-avatar').src = def;
+    document.getElementById('menu-large-avatar').src = def;
+    document.getElementById('menu-user-name').innerText = "Tetamu (Guest)";
+    document.getElementById('menu-user-email').innerText = "Sila log masuk untuk simpan rekod";
+    
+    updateProfileMenuUI();
+    toggleProfileMenu();
+    alert("Berjaya log keluar.");
 }
