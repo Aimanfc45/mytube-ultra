@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>MyTube Ultra Web3</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<!-- ETHERS -->
+<!-- ETHERS JS -->
 
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
 
@@ -36,7 +39,9 @@ linear-gradient(
 );
 
 color:white;
+
 overflow-x:hidden;
+
 padding-bottom:120px;
 
 }
@@ -102,7 +107,7 @@ overflow-x:auto;
 
 gap:12px;
 
-padding:0 16px 14px;
+padding:0 16px 16px;
 
 }
 
@@ -141,9 +146,9 @@ font-weight:700;
 
 margin:0 16px 22px;
 
-padding:26px;
+padding:28px;
 
-border-radius:32px;
+border-radius:34px;
 
 background:
 linear-gradient(
@@ -152,11 +157,11 @@ linear-gradient(
 #00bfff
 );
 
-box-shadow:
-0 0 40px rgba(0,191,255,0.25);
-
 position:relative;
 overflow:hidden;
+
+box-shadow:
+0 0 40px rgba(0,191,255,0.25);
 
 }
 
@@ -207,7 +212,7 @@ word-break:break-all;
 
 .connect-btn{
 
-margin-top:20px;
+margin-top:22px;
 
 width:100%;
 padding:16px;
@@ -248,7 +253,7 @@ color:#00ff88;
 
 .token-card{
 
-margin:0 16px 15px;
+margin:0 16px 16px;
 
 padding:18px;
 
@@ -318,7 +323,7 @@ margin:25px 0 15px;
 
 .video-card{
 
-margin:0 16px 18px;
+margin:0 16px 20px;
 
 background:
 rgba(255,255,255,0.04);
@@ -437,7 +442,7 @@ font-weight:600;
 }
 
 /* ========================= */
-/* NAV */
+/* NAVIGATION */
 /* ========================= */
 
 .bottom-nav{
@@ -612,7 +617,7 @@ id="statusText">
 
 </div>
 
-<!-- TOKEN -->
+<!-- TOKENS -->
 
 <div class="token-card">
 
@@ -708,7 +713,8 @@ PSY - Gangnam Style
 
 <div class="mini-player">
 
-<img src="https://i.ytimg.com/vi/9bZkp7q19f0/maxresdefault.jpg">
+<img
+src="https://i.ytimg.com/vi/9bZkp7q19f0/maxresdefault.jpg">
 
 <div>
 
@@ -785,7 +791,14 @@ You
 <script>
 
 /* ========================= */
-/* MYTUBE WEB3 */
+/* CHECK ETHERS */
+/* ========================= */
+
+console.log("ETHERS:",
+typeof ethers);
+
+/* ========================= */
+/* WEB3 */
 /* ========================= */
 
 let provider;
@@ -802,6 +815,15 @@ try{
 
 status.innerText =
 "⏳ Connecting Wallet...";
+
+if(typeof ethers === "undefined"){
+
+status.innerText =
+"❌ Ethers.js Not Loaded";
+
+return;
+
+}
 
 if(typeof window.ethereum ===
 "undefined"){
