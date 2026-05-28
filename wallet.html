@@ -1,328 +1,633 @@
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MyTube Wallet - Watch to Earn</title>
-<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+
+<title>MyTube Web3 Wallet</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; }
-  body {
-    background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
-    color: #fff; min-height: 100vh; padding: 20px;
-  }
- .wallet-container {
-    background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 24px;
-    width: 100%; max-width: 480px; margin: 0 auto; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-  }
- .logo h1 {
-    font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 20px;
-    background: linear-gradient(90deg, #22c55e, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  }
- .balance-card {
-    background: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%); border-radius: 20px;
-    padding: 20px; margin-bottom: 16px; text-align: center;
-  }
- .earn-card {
-    background: linear-gradient(135deg, #f59e0b, #ef4444); border-radius: 20px;
-    padding: 20px; margin-bottom: 16px; text-align: center;
-  }
- .balance-label { font-size: 13px; opacity: 0.8; }
- .balance-amount { font-size: 28px; font-weight: 700; margin: 6px 0; }
- .address { font-size: 11px; opacity: 0.7; word-break: break-all; }
-  button,.task-btn {
-    width: 100%; padding: 14px; border: none; border-radius: 14px; background: #22c55e;
-    color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s;
-  }
-  button:hover { background: #16a34a; transform: translateY(-2px); }
-  button:disabled { opacity: 0.5; cursor: not-allowed; }
- .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
- .action-btn { background: rgba(255, 255, 255, 0.08); padding: 12px; text-align: center; border-radius: 12px; cursor: pointer; }
- .action-btn:hover { background: rgba(255, 255, 255, 0.15); }
- .token-list,.task-list { margin-top: 16px; }
- .token-item,.task-item {
-    background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 12px;
-    display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
-  }
- .task-item { flex-direction: column; align-items: flex-start; }
- .task-btn { margin-top: 8px; padding: 10px; font-size: 14px; }
- .task-title { font-weight: 600; font-size: 15px; }
- .task-desc { font-size: 12px; opacity: 0.7; margin-top: 4px; }
- .receive-address {
-    background: rgba(255, 255, 255, 0.05); padding: 10px; border-radius: 12px;
-    margin-top: 10px; font-size: 11px; word-break: break-all;
-  }
- .copy-btn {
-    background: #3b82f6; padding: 6px 12px; font-size: 12px; border-radius: 8px; margin-top: 6px; width: auto;
-  }
- .hidden { display: none; }
- .status { text-align: center; margin-top: 12px; font-size: 13px; color: #fbbf24; }
- .badge { background: #22c55e; padding: 2px 8px; border-radius: 6px; font-size: 11px; margin-left: 6px; }
- .network-tag {
-    display: inline-block;
-    background: rgba(59, 130, 246, 0.2);
-    padding: 4px 10px;
-    border-radius: 8px;
-    font-size: 12px;
-    margin-top: 8px;
-  }
+
+/* ========================= */
+/* MYTUBE WEB3 😭🔥 */
+/* ========================= */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+
+background:
+linear-gradient(
+180deg,
+#050505,
+#111
+);
+
+color:white;
+padding:20px;
+padding-bottom:120px;
+
+}
+
+/* HEADER */
+
+.header{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+
+}
+
+.logo{
+
+font-size:30px;
+font-weight:700;
+
+}
+
+.logo span{
+color:#ff0033;
+}
+
+.connect-btn{
+
+padding:14px 20px;
+border:none;
+border-radius:18px;
+
+background:
+linear-gradient(
+135deg,
+#ff0033,
+#ff6600
+);
+
+color:white;
+font-weight:700;
+
+}
+
+/* WALLET CARD */
+
+.wallet-card{
+
+background:
+linear-gradient(
+135deg,
+#6a00ff,
+#00bfff
+);
+
+padding:28px;
+border-radius:30px;
+margin-bottom:22px;
+
+box-shadow:
+0 0 40px rgba(0,191,255,0.25);
+
+}
+
+.wallet-title{
+
+font-size:14px;
+opacity:0.8;
+margin-bottom:10px;
+
+}
+
+.wallet-balance{
+
+font-size:42px;
+font-weight:700;
+margin-bottom:10px;
+
+}
+
+.wallet-address{
+
+font-size:13px;
+opacity:0.8;
+word-break:break-all;
+
+}
+
+/* TOKEN */
+
+.token-card{
+
+background:
+rgba(255,255,255,0.05);
+
+border:
+1px solid rgba(255,255,255,0.08);
+
+padding:20px;
+border-radius:24px;
+margin-bottom:16px;
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+backdrop-filter:blur(15px);
+
+}
+
+.token-left{
+
+display:flex;
+align-items:center;
+gap:14px;
+
+}
+
+.token-icon{
+
+width:48px;
+height:48px;
+border-radius:50%;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:22px;
+
+}
+
+.bnb{
+background:#f3ba2f;
+color:black;
+}
+
+.myt{
+background:#ff0033;
+}
+
+/* SEND */
+
+.section-title{
+
+font-size:22px;
+font-weight:700;
+margin:30px 0 18px;
+
+}
+
+.send-box{
+
+background:
+rgba(255,255,255,0.05);
+
+padding:22px;
+border-radius:25px;
+
+border:
+1px solid rgba(255,255,255,0.08);
+
+}
+
+.send-box input{
+
+width:100%;
+padding:16px;
+margin-bottom:14px;
+
+border:none;
+outline:none;
+
+border-radius:18px;
+
+background:#181818;
+color:white;
+
+}
+
+.send-btn{
+
+width:100%;
+padding:16px;
+
+border:none;
+border-radius:18px;
+
+background:
+linear-gradient(
+135deg,
+#00ff88,
+#00ccff
+);
+
+font-weight:700;
+font-size:16px;
+
+}
+
+/* STATUS */
+
+.status{
+
+margin-top:15px;
+font-size:14px;
+color:#00ff88;
+
+}
+
+/* NAV */
+
+.bottom-nav{
+
+position:fixed;
+bottom:0;
+left:0;
+
+width:100%;
+
+background:
+rgba(0,0,0,0.95);
+
+display:flex;
+justify-content:space-around;
+
+padding:15px 0;
+
+border-top:
+1px solid rgba(255,255,255,0.05);
+
+backdrop-filter:blur(15px);
+
+}
+
+.nav-btn{
+
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:5px;
+
+font-size:13px;
+
+}
+
+.nav-icon{
+font-size:24px;
+}
+
 </style>
+
 </head>
+
 <body>
 
-<div class="wallet-container">
-  <div class="logo"><h1>MyTube Wallet</h1></div>
+<!-- HEADER -->
 
-  <div id="connect-section">
-    <button id="connectBtn">Sambungkan Wallet</button>
-    <p class="status">Buka dalam DApp Browser Trust Wallet / MetaMask</p>
-  </div>
+<div class="header">
 
-  <div id="wallet-section" class="hidden">
-    <div class="balance-card">
-      <div class="balance-label">Total Portfolio</div>
-      <div class="balance-amount" id="totalUSD">$0.00</div>
-      <div class="address" id="address"></div>
-      <div class="network-tag" id="networkTag">Network: -</div>
-    </div>
+<div class="logo">
+My<span>Tube</span> Web3
+</div>
 
-    <div class="earn-card">
-      <div class="balance-label">Watch-to-Earn Points</div>
-      <div class="balance-amount" id="points">0</div>
-      <div class="address">≈ $<span id="pointsUSD">0.00</span> | Claim min 1000 point</div>
-      <button style="margin-top:10px;" onclick="claimPoints()">Claim Points</button>
-    </div>
+<button
+class="connect-btn"
+onclick="connectWallet()">
 
-    <div class="task-list">
-      <div style="font-size:14px; font-weight:600; margin-bottom:8px;">Task Harian</div>
+Connect Wallet
 
-      <div class="task-item">
-        <div>
-          <div class="task-title">Tonton Video 5 Minit <span class="badge">+20 pts</span></div>
-          <div class="task-desc">Tonton video YouTube MyTube dan claim</div>
-        </div>
-        <button class="task-btn" onclick="doTask('watch', 20)">Claim 20 Points</button>
-      </div>
+</button>
 
-      <div class="task-item">
-        <div>
-          <div class="task-title">Swap 500 Coin <span class="badge">+100 pts</span></div>
-          <div class="task-desc">Minimum swap $0.50 = RM2.35. Limit 5x sehari</div>
-        </div>
-        <button class="task-btn" onclick="doTask('swap500', 100)">Mula Swap</button>
-      </div>
+</div>
 
-      <div class="task-item">
-        <div>
-          <div class="task-title">Swap 2000 Coin <span class="badge">+400 pts</span></div>
-          <div class="task-desc">Minimum swap $2.00 = RM9.40</div>
-        </div>
-        <button class="task-btn" onclick="doTask('swap2000', 400)">Mula Swap</button>
-      </div>
-    </div>
+<!-- WALLET -->
 
-    <div class="token-list" id="tokenList"></div>
+<div class="wallet-card">
 
-    <div style="margin-top:16px;">
-      <div style="font-size:14px; opacity:0.8; margin-bottom:8px;">Alamat Receive</div>
-      <div class="receive-address">
-        <b>BTC:</b> bc1q60mm45mkrv60y8vn2na928h7jzqzevzw09yn8j
-        <button class="copy-btn" onclick="copyAddr('bc1q60mm45mkrv60y8vn2na928h7jzqzevzw09yn8j')">Copy</button>
-      </div>
-      <div class="receive-address">
-        <b>BNB:</b> 0x0d76A35DE2517c6A73732B238ce8Bf7E28c8fEfa
-        <button class="copy-btn" onclick="copyAddr('0x0d76A35DE2517c6A73732B238ce8Bf7E28c8fEfa')">Copy</button>
-      </div>
-    </div>
+<div class="wallet-title">
+Wallet Balance
+</div>
 
-    <div class="actions">
-      <div class="action-btn" onclick="shareLink()">Share & Earn 10%</div>
-      <div class="action-btn" onclick="disconnect()">Putuskan</div>
-    </div>
-  </div>
+<div class="wallet-balance"
+id="bnbBalance">
+
+0 BNB
+
+</div>
+
+<div class="wallet-address"
+id="walletAddress">
+
+Wallet not connected
+
+</div>
+
+</div>
+
+<!-- TOKENS -->
+
+<div class="token-card">
+
+<div class="token-left">
+
+<div class="token-icon bnb">
+🟡
+</div>
+
+<div>
+
+<div>
+BNB
+</div>
+
+<div style="font-size:13px;color:#aaa;">
+BNB Smart Chain
+</div>
+
+</div>
+
+</div>
+
+<div id="bnbToken">
+0
+</div>
+
+</div>
+
+<div class="token-card">
+
+<div class="token-left">
+
+<div class="token-icon myt">
+🔥
+</div>
+
+<div>
+
+<div>
+MYT Coin
+</div>
+
+<div style="font-size:13px;color:#aaa;">
+MyTube Token
+</div>
+
+</div>
+
+</div>
+
+<div>
+25,000
+</div>
+
+</div>
+
+<!-- SEND -->
+
+<div class="section-title">
+Send BNB
+</div>
+
+<div class="send-box">
+
+<input
+type="text"
+id="sendAddress"
+placeholder="Wallet address">
+
+<input
+type="number"
+id="sendAmount"
+placeholder="Amount BNB">
+
+<button
+class="send-btn"
+onclick="sendBNB()">
+
+Send Crypto
+
+</button>
+
+<div class="status"
+id="statusText">
+
+</div>
+
+</div>
+
+<!-- NAV -->
+
+<div class="bottom-nav">
+
+<div class="nav-btn">
+
+<div class="nav-icon">
+🏠
+</div>
+
+<div>
+Home
+</div>
+
+</div>
+
+<div class="nav-btn">
+
+<div class="nav-icon">
+🎬
+</div>
+
+<div>
+Shorts
+</div>
+
+</div>
+
+<div class="nav-btn">
+
+<div class="nav-icon">
+💰
+</div>
+
+<div>
+Wallet
+</div>
+
+</div>
+
+<div class="nav-btn">
+
+<div class="nav-icon">
+👤
+</div>
+
+<div>
+Profile
+</div>
+
+</div>
+
 </div>
 
 <script>
-let provider, signer, userAddress;
 
-// Token ikut network
-const TOKENS = {
- 1: [ // Ethereum Mainnet
-    { symbol: 'ETH', address: null, decimals: 18, coingecko: 'ethereum' },
-    { symbol: 'USDT', address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', decimals: 6, coingecko: 'tether' },
-    { symbol: 'USDC', address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', decimals: 6, coingecko: 'usd-coin' }
-  ],
- 56: [ // BNB Smart Chain
-    { symbol: 'BNB', address: null, decimals: 18, coingecko: 'binancecoin' },
-    { symbol: 'USDT', address: '0x55d398326f99059fF775485246999027B3197955', decimals: 18, coingecko: 'tether' },
-    { symbol: 'USDC', address: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d', decimals: 18, coingecko: 'usd-coin' }
-  ]
-};
+/* ========================= */
+/* WEB3 😭🔥 */
+/* ========================= */
 
-// Ambil ref dari URL
-const urlParams = new URLSearchParams(window.location.search);
-const refAddress = urlParams.get('ref');
+let provider;
+let signer;
+let walletAddress;
 
-const connectBtn = document.getElementById('connectBtn');
-connectBtn.onclick = connectWallet;
+/* ========================= */
+/* CONNECT WALLET */
+/* ========================= */
 
-async function connectWallet() {
-  if (typeof window.ethereum === 'undefined') {
-    alert('Sila buka dalam DApp Browser Trust Wallet');
-    return;
-  }
-  try {
-    connectBtn.disabled = true;
-    connectBtn.textContent = 'Connecting...';
-    provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send('eth_requestAccounts', []);
-    signer = provider.getSigner();
-    userAddress = await signer.getAddress();
+async function connectWallet(){
 
-    if (refAddress && ethers.utils.isAddress(refAddress) && refAddress!== userAddress) {
-      localStorage.setItem('referrer_' + userAddress, refAddress);
-    }
+if(window.ethereum){
 
-    document.getElementById('address').textContent = userAddress.slice(0, 6) + '...' + userAddress.slice(-4);
-    await loadBalances();
-    loadPoints();
+try{
 
-    document.getElementById('connect-section').classList.add('hidden');
-    document.getElementById('wallet-section').classList.remove('hidden');
-  } catch (err) {
-    alert('Gagal sambung: ' + err.message);
-    connectBtn.disabled = false;
-    connectBtn.textContent = 'Sambungkan Wallet';
-  }
+provider =
+new ethers.providers.Web3Provider(
+window.ethereum
+);
+
+await provider.send(
+"eth_requestAccounts",
+[]
+);
+
+signer = provider.getSigner();
+
+walletAddress =
+await signer.getAddress();
+
+document.getElementById(
+"walletAddress"
+).innerText = walletAddress;
+
+loadBalance();
+
+}
+catch(err){
+
+alert("Connection Failed 😭");
+
 }
 
-async function loadBalances() {
-  let totalUSD = 0;
-  const tokenListEl = document.getElementById('tokenList');
-  tokenListEl.innerHTML = 'Loading...';
+}else{
 
-  try {
-    const network = await provider.getNetwork();
-    const chainId = network.chainId;
+alert(
+"Install MetaMask / Trust Wallet 😭🔥"
+);
 
-    const networkNames = {1: 'Ethereum', 56: 'BNB Chain', 137: 'Polygon'};
-    document.getElementById('networkTag').textContent = 'Network: ' + (networkNames[chainId] || 'Unknown ' + chainId);
-
-    const activeTokens = TOKENS[chainId] || [
-      { symbol: 'NATIVE', address: null, decimals: 18, coingecko: 'ethereum' }
-    ];
-
-    const ids = activeTokens.map(t => t.coingecko).join(',');
-    const priceRes = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`);
-    const prices = await priceRes.json();
-
-    let html = '';
-
-    for (let token of activeTokens) {
-      try {
-        let balance = 0;
-        if (token.address === null) {
-          balance = await provider.getBalance(userAddress);
-          balance = parseFloat(ethers.utils.formatUnits(balance, token.decimals));
-        } else {
-          const erc20ABI = ["function balanceOf(address) view returns (uint256)"];
-          const contract = new ethers.Contract(token.address, erc20ABI, provider);
-          balance = await contract.balanceOf(userAddress);
-          balance = parseFloat(ethers.utils.formatUnits(balance, token.decimals));
-        }
-
-        const usdValue = balance * (prices[token.coingecko]?.usd || 0);
-        totalUSD += usdValue;
-
-        html += `
-          <div class="token-item">
-            <div class="token-name">${token.symbol}</div>
-            <div class="token-balance">
-              <div>${balance.toFixed(4)}</div>
-              <div class="token-usd">$${usdValue.toFixed(2)}</div>
-            </div>
-          </div>
-        `;
-      } catch (e) {
-        console.log('Skip token:', token.symbol, e);
-      }
-    }
-
-    document.getElementById('totalUSD').textContent = '$' + totalUSD.toFixed(2);
-    tokenListEl.innerHTML = html || '<div class="token-item">Tiada token dijumpai</div>';
-
-  } catch (e) {
-    tokenListEl.innerHTML = '<div class="token-item">Error load balance</div>';
-    console.error(e);
-  }
 }
 
-function loadPoints() {
-  if (!userAddress) return;
-  const points = parseInt(localStorage.getItem('points_' + userAddress) || 0);
-  document.getElementById('points').textContent = points.toLocaleString();
-  document.getElementById('pointsUSD').textContent = (points / 1000).toFixed(2);
 }
 
-function doTask(type, points) {
-  if (!userAddress) return alert('Sambung wallet dulu');
+/* ========================= */
+/* LOAD BALANCE */
+/* ========================= */
 
-  const today = new Date().toDateString();
-  const taskKey = 'task_' + userAddress + '_' + today;
-  const taskData = JSON.parse(localStorage.getItem(taskKey) || '{"count":0}');
+async function loadBalance(){
 
-  if (type.includes('swap') && taskData.count >= 5) {
-    return alert('Limit 5 task swap sehari dah capai');
-  }
+const balance =
+await provider.getBalance(
+walletAddress
+);
 
-  taskData.count += 1;
-  localStorage.setItem(taskKey, JSON.stringify(taskData));
+const bnb =
+ethers.utils.formatEther(balance);
 
-  let currentPoints = parseInt(localStorage.getItem('points_' + userAddress) || 0);
-  currentPoints += points;
-  localStorage.setItem('points_' + userAddress, currentPoints);
+document.getElementById(
+"bnbBalance"
+).innerText =
+parseFloat(bnb).toFixed(4)
++ " BNB";
 
-  const referrer = localStorage.getItem('referrer_' + userAddress);
-  if (referrer) {
-    let refPoints = parseInt(localStorage.getItem('points_' + referrer) || 0);
-    localStorage.setItem('points_' + referrer, refPoints + Math.floor(points * 0.1));
-  }
+document.getElementById(
+"bnbToken"
+).innerText =
+parseFloat(bnb).toFixed(4);
 
-  loadPoints();
-  alert(`Task siap! +${points} point ditambah.`);
 }
 
-function claimPoints() {
-  if (!userAddress) return;
-  const points = parseInt(localStorage.getItem('points_' + userAddress) || 0);
+/* ========================= */
+/* SEND BNB */
+/* ========================= */
 
-  if (points < 1000) return alert('Minimum claim 1000 point = $1');
+async function sendBNB(){
 
-  alert(`Claim berjaya! ${points} point = $${(points/1000).toFixed(2)}\n\nIni demo. Untuk real, kena connect smart contract claim function.`);
+const to =
+document.getElementById(
+"sendAddress"
+).value;
 
-  localStorage.setItem('points_' + userAddress, 0);
-  loadPoints();
+const amount =
+document.getElementById(
+"sendAmount"
+).value;
+
+if(!to || !amount){
+
+alert("Fill all fields 😭");
+
+return;
+
 }
 
-function shareLink() {
-  if (!userAddress) return alert('Sambung wallet dulu');
-  const link = `${window.location.origin}${window.location.pathname}?ref=${userAddress}`;
-  navigator.clipboard.writeText(link);
-  alert('Link referral dah copy!\nBila orang join guna link ni, kau dapat 10% dari point diorang.');
+try{
+
+document.getElementById(
+"statusText"
+).innerText =
+"⏳ Sending...";
+
+const tx =
+await signer.sendTransaction({
+
+to: to,
+
+value:
+ethers.utils.parseEther(amount)
+
+});
+
+await tx.wait();
+
+document.getElementById(
+"statusText"
+).innerText =
+"✅ Success TX: "
++ tx.hash;
+
+loadBalance();
+
+}
+catch(err){
+
+document.getElementById(
+"statusText"
+).innerText =
+"❌ Failed";
+
+console.log(err);
+
 }
 
-function copyAddr(addr) {
-  navigator.clipboard.writeText(addr);
-  alert('Alamat dah copy!');
 }
 
-function disconnect() {
-  document.getElementById('wallet-section').classList.add('hidden');
-  document.getElementById('connect-section').classList.remove('hidden');
-  connectBtn.disabled = false;
-  connectBtn.textContent = 'Sambungkan Wallet';
-}
 </script>
 
 </body>
