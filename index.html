@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyTube Ultra</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="header-main">
+        <div class="header-left">
+            <i class="fas fa-bars menu-icon" id="btn-menu"></i>
+            <h1 class="logo-text" id="btn-logo">MyTube<span class="play-icon">▶</span></h1>
+        </div>
+        
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Cari video...">
+            <button id="search-submit-btn"><i class="fas fa-search"></i></button>
+        </div>
+
+        <div class="header-right">
+            <i class="fas fa-desktop cast-icon" id="btn-cast"></i>
+            <div class="notification-badge" id="btn-notification">
+                <i class="fas fa-bell"></i>
+                <span class="badge">8</span>
+            </div>
+            
+            <div class="login-wrapper">
+                <img src="https://www.w3schools.com/howto/img_avatar.png" id="user-avatar" class="user-avatar-img" alt="User Profile">
+                <div id="google-login-trigger" class="transparent-google-btn"></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="category-bar" id="category-container">
+        <button class="cat-btn active" data-topic="Trending"><i class="fas fa-compass"></i></button>
+        <button class="cat-btn" data-topic="Semua">Semua</button>
+        <button class="cat-btn" data-topic="Permainan">Permainan</button>
+        <button class="cat-btn font-live" data-topic="Live">🔴 Langsung</button>
+        <button class="cat-btn" data-topic="Muzik">Muzik</button>
+        <button class="cat-btn" data-topic="Berita">Berita</button>
+    </div>
+
+    <main class="video-grid" id="video-container">
+        </main>
+
+    <div id="mini-player-box" class="mini-player-container hidden-mini-player">
+        <div class="mini-player-video-side" id="mini-player-click-zone">
+            <div id="player-placement-holder"></div>
+        </div>
+        <div class="mini-player-info-side">
+            <div class="mini-text-wrap" id="mini-expand-trigger">
+                <h4 id="mini-player-title">Tajuk Video Ringkas...</h4>
+                <p id="mini-player-channel">Nama Saluran</p>
+            </div>
+            <div class="mini-player-controls">
+                <button id="mini-btn-play-pause" class="mini-ctrl-btn"><i class="fas fa-pause"></i></button>
+                <button id="mini-btn-close" class="mini-ctrl-btn"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div id="user-profile-menu" class="profile-menu-overlay hidden-profile-menu">
+        <div class="profile-menu-header">
+            <h3>Akaun</h3>
+            <button id="close-profile-btn" class="icon-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="profile-user-details">
+            <img src="https://www.w3schools.com/howto/img_avatar.png" id="menu-large-avatar" alt="User Avatar Large">
+            <div class="profile-text-info">
+                <h4 id="menu-user-name">Tetamu (Guest)</h4>
+                <p id="menu-user-email">Sila log masuk untuk simpan rekod</p>
+            </div>
+        </div>
+        <hr class="menu-divider">
+        <div class="profile-menu-items">
+            <div class="menu-item-row"><i class="fas fa-user-shield"></i> <span>Urus Akaun Google Anda</span></div>
+            <div class="menu-item-row"><i class="fas fa-id-card"></i> <span>Saluran Anda</span></div>
+            <div class="menu-item-row"><i class="fas fa-cog"></i> <span>Tetapan Aplikasi</span></div>
+            <button id="btn-logout-google" class="logout-btn-action"><i class="fas fa-sign-out-alt"></i> Log Keluar Akaun</button>
+        </div>
+    </div>
+
+    <nav class="bottom-nav" id="bottom-navigation">
+        <div class="nav-item active" data-page="utama">
+            <i class="fas fa-home"></i>
+            <span>Utama</span>
+        </div>
+        <div class="nav-item" data-page="shorts">
+            <i class="fas fa-bolt"></i>
+            <span>Shorts</span>
+        </div>
+        <div class="nav-item add-button" id="btn-tambah-video">
+            <i class="fas fa-plus-circle"></i>
+        </div>
+        <div class="nav-item" data-page="langganan">
+            <i class="fas fa-clapperboard"></i>
+            <span>Langganan</span>
+        </div>
+        <div class="nav-item" data-page="anda" id="btn-tab-anda">
+            <img src="https://www.w3schools.com/howto/img_avatar.png" id="nav-user-avatar" class="mini-nav-avatar" alt="Anda">
+            <span>Anda</span>
+        </div>
+    </nav>
+
+    <div id="video-player-screen" class="player-screen-overlay hidden-screen">
+        <div class="player-top-bar">
+            <button id="minimize-player-btn" class="icon-btn"><i class="fas fa-arrow-down"></i></button>
+            <button id="close-player-btn" class="icon-btn"><i class="fas fa-times"></i></button>
+        </div>
+
+        <div class="video-wrapper" id="main-player-wrapper">
+            <div id="youtube-api-player"></div>
+        </div>
+
+        <div class="player-meta-details">
+            <h2 id="player-video-title">Memuatkan tajuk...</h2>
+            
+            <div class="player-action-buttons">
+                <button class="btn-sub" id="btn-sertai">Sertai</button>
+                <button class="btn-sub red-alert" id="btn-subscribe"><i class="fas fa-bell"></i> Langgan</button>
+                <button class="btn-sub" id="btn-like"><i class="fas fa-thumbs-up"></i> 14K</button>
+                <button class="btn-sub" id="btn-kongsi"><i class="fas fa-share"></i> Kongsi</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
