@@ -1,268 +1,335 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MyTube Wallet</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,Arial,sans-serif;}
 body{background:#0a0a0f;color:#fff;padding-bottom:90px;}
-.header{display:flex;justify-content:space-between;align-items:center;padding:18px 16px;}
-.logo-wrap{display:flex;align-items:center;gap:12px;}
-.logo{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#ff3b30,#ff6b6b);display:flex;align-items:center;justify-content:center;}
-.logo::after{content:"▶";color:white;font-size:18px;margin-left:2px;}
-.logo-text{font-size:18px;font-weight:700;}
-.logo-text span{color:#ff3b30;}
-.verified{font-size:12px;color:#8b8b9b;display:flex;align-items:center;gap:4px;}
-.notif{width:40px;height:40px;background:#1a1a22;border-radius:12px;display:flex;align-items:center;justify-content:center;position:relative;}
-.notif::after{content:'';width:8px;height:8px;background:#ff3b30;border-radius:50%;position:absolute;top:6px;right:6px;}
-
-.balance-card{
-  margin:0 16px 20px;padding:22px;border-radius:24px;
-  background: url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxISEhUSEhIVFRUVFRcVGBgVGBcXGBgVGBcWFhUVFRUYHSggGBolGxgWITEhJSkrLi4vGB8zODMtNygtLisBCgoKDg0OGhAQGy0mICYtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLf/AABEIAMgA9AMBIgACEQEDEQH/xAAcAAEAAgMBAQEAAAAAAAAAAAAABQYHAAIDCAH/xABMEAABAwEGAQoHBAoCAgMAAAABAAIRAyEEEkEFQVFhBhMiMnGBkaGxwQcjMrLh8BRS8RQzYnKC8RckM4KSobL/xAAXAQEBAQEBAAAAAAAAAAAAAAAAAQID/8QAHxEBAAICAQQBAAAAAAAAAAAAAAECEQMSITFBUf/aAAwDAQACEQMRAD8A9s4iKlYhK0UCFKoqqwgUKoCKKgbQCKNFxAAAFAGAVIAAAGgEAAACARAUCAApVVACgKQAABUCgABqkJBQAf4aEAAAAAAAAAAAABAAAAAAAAAAAAAAEAFQAAAAAACAAAEAAAAAAAgEAAAACgAAAMVAgAFSa1ASBVaoUSwBSANAAEAgAAAEAAAACAAPUAFAAEABAAAACAAAAAAAAAAJAAABAAAAAwAAAAAAAAABUAABAAAAAAAAAAAAAAAADAGBgAAASFiEIARoAAABQFAMAAAACAAAAACAAEAAADUAAABAgCAAUAAAAAACUAQABAAAAAFAAAAAAAAIAAAACAAAAAAAAAAAAAAAgAAAAAAAAAACQAAAAAADAAAAAAAAAAEAQAAAAAAAH//2Q==') center/cover no-repeat;
-  position:relative;overflow:hidden;min-height:220px;
-}
-.balance-label{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.8);font-size:14px;}
-.balance-amount{font-size:32px;font-weight:700;margin:8px 0;}
-.balance-change{color:#00d26a;font-size:14px;font-weight:600;}
-.currency-tag{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.15);padding:4px 10px;border-radius:20px;font-size:13px;margin-left:8px;backdrop-filter:blur(10px);}
-.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px;}
-.action-btn{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;cursor:pointer;}
-.action-icon{width:46px;height:46px;background:rgba(255,255,255,0.15);backdrop-filter:blur(10px);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;}
-
-.assets-section{margin:0 16px;background:#1a1a22;border-radius:20px;padding:18px;}
-.assets-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
-.assets-title{font-weight:600;font-size:16px;}
-.manage{color:#8b8b9b;font-size:13px;cursor:pointer;}
-
-.asset-item{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #2a2a33;}
-.asset-item:last-child{border-bottom:none;}
-.asset-left{display:flex;align-items:center;gap:12px;}
-.asset-icon{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
-.asset-name{font-weight:600;font-size:15px;}
-.asset-sub{font-size:12px;color:#8b8b9b;}
-.asset-right{text-align:right;}
-.asset-amount{font-weight:600;font-size:15px;}
-.asset-usd{font-size:12px;color:#8b8b9b;}
-.asset-change{font-size:12px;color:#00d26a;}
-
-.connect-btn{width:100%;margin-top:16px;padding:14px;background:linear-gradient(135deg,#ff3b30,#ff6b6b);border:none;border-radius:16px;color:white;font-weight:600;font-size:16px;cursor:pointer;}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#1a1a22;display:flex;justify-content:space-around;padding:10px 0;border-top:1px solid #2a2a33;}
-.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;color:#8b8b9b;}
-.nav-item.active{color:white;}
-.nav-item.active .nav-icon{background:#7f5af0;color:white;}
-.nav-icon{width:56px;height:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;}
-#statusMsg{margin-top:10px;font-size:13px;text-align:center;}
-.error{color:#ff3b30;}
-.success{color:#00d26a;}
-.loading{color:#8b8b9b;}
+.hidden{display:none;}
+.page{padding:20px;}
+.header{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.card{background:linear-gradient(135deg,#8b5cf6,#06b6d4);padding:24px;border-radius:24px;margin-bottom:20px;}
+.balance{font-size:32px;font-weight:700;margin:8px 0;}
+.change{color:#4ade80;font-size:14px;}
+.btn-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:20px;}
+.btn-icon{text-align:center;cursor:pointer;}
+.btn-icon div{width:48px;height:48px;background:rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:20px;}
+.btn-icon span{font-size:12px;color:#a1a1aa;}
+.assets{background:#1a1a22;padding:20px;border-radius:20px;}
+.assets-header{display:flex;justify-content:space-between;margin-bottom:16px;color:#a1a1aa;font-size:14px;}
+.asset{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #2a2a33;}
+.asset:last-child{border:none;}
+.asset-info{flex:1;}
+.asset-symbol{font-weight:600;}
+.asset-name{font-size:12px;color:#a1a1aa;}
+.asset-value{text-align:right;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#1a1a22;display:flex;justify-content:space-around;padding:12px 0;border-top:1px solid #2a2a33;}
+.nav-item{text-align:center;cursor:pointer;color:#6b7280;}
+.nav-item.active{color:#fff;}
+.nav-icon{width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:16px;margin:0 auto 4px;font-size:22px;}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;z-index:99;}
+.modal.active{display:flex;}
+.modal-content{background:#1a1a22;padding:24px;border-radius:20px;width:90%;max-width:400px;}
+input,select{width:100%;padding:14px;margin:8px 0;background:#2a2a33;border:none;border-radius:12px;color:white;}
+.btn{width:100%;padding:14px;background:#8b5cf6;border:none;border-radius:12px;color:white;font-weight:600;margin-top:12px;}
+.connect-btn{width:100%;padding:16px;background:#8b5cf6;border:none;border-radius:16px;color:white;font-weight:600;font-size:16px;margin-top:100px;}
+.stake-card{background:linear-gradient(135deg,#1e1b4b,#312e81);padding:20px;border-radius:20px;display:flex;align-items:center;gap:16px;margin-top:20px;}
+.stake-btn{background:#8b5cf6;padding:10px 20px;border-radius:12px;border:none;color:white;font-weight:600;}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="logo-wrap">
-    <div class="logo"></div>
+<!-- CONNECT PAGE -->
+<div id="connectPage" class="page">
+  <div style="text-align:center;margin-top:80px;">
+    <h1>My<span style="color:#ff3b30;">Tube</span> Wallet</h1>
+    <p style="color:#a1a1aa;margin-top:8px;">Open this in Trust Wallet DApp Browser</p>
+    <button class="connect-btn" onclick="connectWallet()">Connect Wallet</button>
+  </div>
+</div>
+
+<!-- WALLET PAGE -->
+<div id="walletPage" class="page hidden">
+  <div class="header">
     <div>
-      <div class="logo-text">My<span>Tube</span> Wallet</div>
-      <div class="verified">Your Web3 Wallet ✓</div>
-    </div>
-  </div>
-  <div class="notif">🔔</div>
-</div>
-
-<div class="balance-card">
-  <div class="balance-label">Total Balance 👁</div>
-  <div style="display:flex;align-items:center;">
-    <div class="balance-amount" id="totalBalance">$0.00</div>
-    <div class="currency-tag">USD</div>
-  </div>
-  <div class="balance-change" id="change">Connect wallet to view</div>
-  
-  <div class="actions">
-    <div class="action-btn" onclick="alert('Send function coming next')">
-      <div class="action-icon">↗</div>Send
-    </div>
-    <div class="action-btn" onclick="copyAddress()">
-      <div class="action-icon">↓</div>Receive
-    </div>
-    <div class="action-btn" onclick="alert('Swap via PancakeSwap')">
-      <div class="action-icon">⇄</div>Swap
-    </div>
-    <div class="action-btn" onclick="openBscScan()">
-      <div class="action-icon">🕒</div>History
+      <div style="font-size:20px;font-weight:700;">My<span style="color:#ff3b30;">Tube</span> Wallet</div>
+      <div style="font-size:12px;color:#a1a1aa;" id="address">0x000...0000</div>
     </div>
   </div>
 
-  <button class="connect-btn" id="connectBtn">Connect Wallet</button>
-  <div id="statusMsg"></div>
-</div>
-
-<div class="assets-section">
-  <div class="assets-header">
-    <div class="assets-title">My Assets</div>
-    <div class="manage">Manage Tokens ⚙</div>
+  <div class="card">
+    <div>Total Balance</div>
+    <div class="balance" id="totalBalance">$0.00</div>
+    <div class="btn-grid">
+      <div class="btn-icon" onclick="openSendModal()"><div>↗</div><span>Send</span></div>
+      <div class="btn-icon" onclick="openReceiveModal()"><div>↓</div><span>Receive</span></div>
+      <div class="btn-icon" onclick="openSwapModal()"><div>⇄</div><span>Swap</span></div>
+      <div class="btn-icon" onclick="openHistory()"><div>🕒</div><span>History</span></div>
+    </div>
   </div>
 
-  <div id="assetsList">
-    <!-- Assets akan diisi real data dari blockchain -->
+  <div class="assets">
+    <div class="assets-header"><span>My Assets</span></div>
+    <div id="assetsList">Loading...</div>
+  </div>
+
+  <div class="stake-card">
+    <div style="flex:1;">
+      <div style="font-weight:600;margin-bottom:4px;">Stake MYT Token</div>
+      <div style="font-size:13px;color:#a1a1aa;">Earn up to <span style="color:#a855f7;">25% APY</span></div>
+      <button class="stake-btn" onclick="window.open('https://pancakeswap.finance/pools','_blank')">Stake Now</button>
+    </div>
+    <div style="font-size:40px;">🔒</div>
   </div>
 </div>
 
-<div class="bottom-nav">
-  <div class="nav-item">⌂<br>Home</div>
-  <div class="nav-item">📊<br>Market</div>
-  <div class="nav-item active">💳<br>Wallet</div>
-  <div class="nav-item">💰<br>Earn</div>
-  <div class="nav-item">👤<br>Profile</div>
+<!-- MARKET PAGE -->
+<div id="marketPage" class="page hidden">
+  <h2 style="margin-bottom:20px;">Market</h2>
+  <div id="marketList">Loading...</div>
+</div>
+
+<!-- EARN PAGE -->
+<div id="earnPage" class="page hidden">
+  <h2 style="margin-bottom:20px;">Earn</h2>
+  <div class="stake-card" onclick="window.open('https://pancakeswap.finance/pools','_blank')">
+    <div>
+      <div style="font-weight:600;">Stake BNB</div>
+      <div style="font-size:13px;color:#a1a1aa;">Up to 15% APY on PancakeSwap</div>
+    </div>
+  </div>
+  <div class="stake-card" onclick="window.open('https://pancakeswap.finance/farms','_blank')">
+    <div>
+      <div style="font-weight:600;">Farm LP</div>
+      <div style="font-size:13px;color:#a1a1aa;">Provide liquidity & earn fees</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE PAGE -->
+<div id="profilePage" class="page hidden">
+  <h2 style="margin-bottom:20px;">Profile</h2>
+  <div class="asset" onclick="copyAddress()">
+    <div class="asset-info">
+      <div class="asset-symbol">Wallet Address</div>
+      <div class="asset-name" id="profileAddress"></div>
+    </div>
+  </div>
+  <div class="asset" onclick="window.open('https://bscscan.com/address/'+address)">
+    <div class="asset-info">
+      <div class="asset-symbol">View on BscScan</div>
+    </div>
+  </div>
+  <button class="btn" style="background:#ef4444;" onclick="disconnect()">Disconnect</button>
+</div>
+
+<!-- MODALS -->
+<div class="modal" id="sendModal">
+  <div class="modal-content">
+    <h3>Send Token</h3>
+    <select id="sendToken"><option value="BNB">BNB</option><option value="USDT">USDT</option></select>
+    <input type="text" id="sendTo" placeholder="0x...">
+    <input type="number" id="sendAmount" placeholder="Amount">
+    <button class="btn" onclick="sendToken()">Send Now</button>
+    <button class="btn" style="background:#2a2a33;" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<div class="modal" id="swapModal">
+  <div class="modal-content">
+    <h3>Swap Token</h3>
+    <select id="swapFrom"><option value="BNB">BNB</option><option value="USDT">USDT</option></select>
+    <select id="swapTo"><option value="USDT">USDT</option><option value="BNB">BNB</option></select>
+    <input type="number" id="swapAmount" placeholder="Amount">
+    <button class="btn" onclick="swapToken()">Swap Now</button>
+    <button class="btn" style="background:#2a2a33;" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<div class="modal" id="receiveModal">
+  <div class="modal-content">
+    <h3>Receive</h3>
+    <input type="text" id="myAddress" readonly>
+    <button class="btn" onclick="copyAddress()">Copy Address</button>
+    <button class="btn" style="background:#2a2a33;" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav hidden" id="bottomNav">
+  <div class="nav-item" onclick="switchPage('market')">
+    <div class="nav-icon">📊</div><span>Market</span>
+  </div>
+  <div class="nav-item active" onclick="switchPage('wallet')">
+    <div class="nav-icon">💳</div><span>Wallet</span>
+  </div>
+  <div class="nav-item" onclick="switchPage('earn')">
+    <div class="nav-icon">💰</div><span>Earn</span>
+  </div>
+  <div class="nav-item" onclick="switchPage('profile')">
+    <div class="nav-icon">👤</div><span>Profile</span>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
 <script>
-const BSC_RPC = "https://bsc-dataseed.binance.org/";
-const provider = new ethers.providers.JsonRpcProvider(BSC_RPC);
+const PANCAKE_ROUTER="0x10ED43C718714eb63d5aA57B72BEE5D07B28B333";
+const WBNB="0xbb4CdB9CBd36B01bD1cBaeBF3bE33CcFBeB8a138";
+const USDT="0x55d398326f99059fF775485246999027B3197955";
 
-const TOKENS = [
-  {symbol: "BNB", name: "BNB", address: null, decimals: 18, icon: "#f0b90b", iconText: "B"},
-  {symbol: "USDT", name: "Tether USD", address: "0x55d398326f99059fF775485246999027B3197955", decimals: 18, icon: "#26a17b", iconText: "T"},
-  {symbol: "MYT", name: "MyTube Token", address: "0x0000", decimals: 18, icon: "#ff3b30", iconText: "M"}, // Tukar contract address MYT kau
-];
+let provider,signer,address;
 
-let userAddress = null;
-let signer = null;
-
-const connectBtn = document.getElementById("connectBtn");
-const statusMsg = document.getElementById("statusMsg");
-
-connectBtn.addEventListener("click", async () => {
-  if (!window.ethereum) {
-    statusMsg.textContent = "Install MetaMask dulu";
-    statusMsg.className = "error";
+async function connectWallet(){
+  if(typeof window.ethereum === 'undefined'){
+    alert("Sila buka link ni guna Trust Wallet DApp Browser");
     return;
   }
-
-  try {
-    statusMsg.textContent = "Connecting...";
-    statusMsg.className = "loading";
-
+  
+  try{
     await window.ethereum.request({ method: 'eth_requestAccounts' });
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+    signer = provider.getSigner();
+    address = await signer.getAddress();
     
-    // Force switch to BSC Mainnet
-    await window.ethereum.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: '0x38' }],
-    }).catch(async (err) => {
-      if (err.code === 4902) {
-        await window.ethereum.request({
-          method: 'wallet_addEthereumChain',
-          params: [{
-            chainId: '0x38',
-            chainName: 'BNB Smart Chain',
-            rpcUrls: [BSC_RPC],
-            nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
-            blockExplorerUrls: ['https://bscscan.com']
-          }]
-        });
-      }
-    });
-
-    const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-    signer = web3Provider.getSigner();
-    userAddress = await signer.getAddress();
-
-    connectBtn.textContent = `${userAddress.slice(0,6)}...${userAddress.slice(-4)}`;
-    connectBtn.style.background = "#00d26a";
-    statusMsg.textContent = "Connected! Loading balances...";
-    statusMsg.className = "success";
-
-    await loadAllBalances();
-
-  } catch (err) {
-    console.error(err);
-    statusMsg.textContent = "Error: " + err.message;
-    statusMsg.className = "error";
+    document.getElementById("connectPage").classList.add("hidden");
+    document.getElementById("walletPage").classList.remove("hidden");
+    document.getElementById("bottomNav").classList.remove("hidden");
+    document.getElementById("address").textContent = address.slice(0,8)+"..."+address.slice(-6);
+    document.getElementById("myAddress").value = address;
+    document.getElementById("profileAddress").textContent = address;
+    
+    loadBalances();
+    loadMarket();
+  }catch(e){
+    alert("Error: "+e.message);
   }
-});
+}
 
-async function loadAllBalances() {
-  try {
-    statusMsg.textContent = "Fetching real balances...";
-    
-    // Get BNB price
-    const priceRes = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=binancecoin,tether&vs_currencies=usd");
-    const prices = await priceRes.json();
-    
-    let totalUSD = 0;
-    let assetsHTML = "";
+function disconnect(){
+  location.reload();
+}
 
-    for (let token of TOKENS) {
-      let balance = 0;
-      let usdValue = 0;
-      
-      if (token.symbol === "BNB") {
-        const bal = await provider.getBalance(userAddress);
-        balance = parseFloat(ethers.utils.formatEther(bal));
-        usdValue = balance * prices.binancecoin.usd;
-      } else if (token.address && token.address !== "0x0000") {
-        // ERC20 token
-        const abi = ["function balanceOf(address) view returns (uint256)", "function decimals() view returns (uint8)"];
-        const contract = new ethers.Contract(token.address, abi, provider);
-        const bal = await contract.balanceOf(userAddress);
-        balance = parseFloat(ethers.utils.formatUnits(bal, token.decimals));
-        
-        if (token.symbol === "USDT") {
-          usdValue = balance * prices.tether.usd;
-        }
-      }
-      
-      totalUSD += usdValue;
-      
-      assetsHTML += `
-        <div class="asset-item">
-          <div class="asset-left">
-            <div class="asset-icon" style="background:${token.icon};">${token.iconText}</div>
-            <div>
-              <div class="asset-name">${token.symbol}</div>
-              <div class="asset-sub">${token.name}</div>
-            </div>
-          </div>
-          <div class="asset-right">
-            <div class="asset-amount">${balance.toFixed(4)} ${token.symbol}</div>
-            <div class="asset-usd">$${usdValue.toFixed(2)}</div>
-          </div>
+async function loadBalances(){
+  const prices=await fetch("https://api.coingecko.com/api/v3/simple/price?ids=binancecoin,tether&vs_currencies=usd").then(r=>r.json());
+  const bnbBal=parseFloat(ethers.utils.formatEther(await provider.getBalance(address)));
+  const usdtContract=new ethers.Contract(USDT,["function balanceOf(address) view returns(uint256)"],provider);
+  const usdtBal=parseFloat(ethers.utils.formatUnits(await usdtContract.balanceOf(address),18));
+  const total=bnbBal*prices.binancecoin.usd+usdtBal*prices.tether.usd;
+  
+  document.getElementById("totalBalance").textContent="$"+total.toLocaleString('en-US',{minimumFractionDigits:2});
+  document.getElementById("assetsList").innerHTML=`
+    <div class="asset">
+      <div style="font-size:32px;">🟡</div>
+      <div class="asset-info">
+        <div class="asset-symbol">BNB</div>
+        <div class="asset-name">BNB Smart Chain</div>
+      </div>
+      <div class="asset-value">
+        <div>${bnbBal.toFixed(4)} BNB</div>
+        <div style="font-size:12px;color:#a1a1aa;">$${(bnbBal*prices.binancecoin.usd).toFixed(2)}</div>
+      </div>
+    </div>
+    <div class="asset">
+      <div style="font-size:32px;">🟢</div>
+      <div class="asset-info">
+        <div class="asset-symbol">USDT</div>
+        <div class="asset-name">Tether USD</div>
+      </div>
+      <div class="asset-value">
+        <div>${usdtBal.toFixed(4)} USDT</div>
+        <div style="font-size:12px;color:#a1a1aa;">$${(usdtBal*prices.tether.usd).toFixed(2)}</div>
+      </div>
+    </div>
+  `;
+}
+
+async function loadMarket(){
+  const res=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=binancecoin,ethereum,tether&order=market_cap_desc");
+  const data=await res.json();
+  let html='';
+  data.forEach(coin=>{
+    html+=`<div class="asset">
+      <div style="font-size:32px;">${coin.symbol=="btc"?"🟠":coin.symbol=="eth"?"🔵":"🟡"}</div>
+      <div class="asset-info">
+        <div class="asset-symbol">${coin.symbol.toUpperCase()}</div>
+        <div class="asset-name">${coin.name}</div>
+      </div>
+      <div class="asset-value">
+        <div>$${coin.current_price.toLocaleString()}</div>
+        <div style="font-size:12px;color:${coin.price_change_percentage_24h>0?'#4ade80':'#ef4444'}">
+          ${coin.price_change_percentage_24h.toFixed(2)}%
         </div>
-      `;
+      </div>
+    </div>`;
+  });
+  document.getElementById('marketList').innerHTML=html;
+}
+
+async function sendToken(){
+  const to=document.getElementById("sendTo").value;
+  const amt=document.getElementById("sendAmount").value;
+  const token=document.getElementById("sendToken").value;
+  if(!ethers.utils.isAddress(to))return alert("Invalid address");
+  
+  try{
+    let tx;
+    if(token=="BNB"){
+      tx=await signer.sendTransaction({to,value:ethers.utils.parseEther(amt)});
+    }else{
+      const c=new ethers.Contract(USDT,["function transfer(address,uint256)returns(bool)"],signer);
+      tx=await c.transfer(to,ethers.utils.parseUnits(amt,18));
     }
-
-    document.getElementById("totalBalance").textContent = `$${totalUSD.toFixed(2)}`;
-    document.getElementById("change").textContent = "Live from BSC blockchain";
-    document.getElementById("assetsList").innerHTML = assetsHTML;
-    statusMsg.textContent = "Balances updated ✓";
-    statusMsg.className = "success";
-
-  } catch (err) {
-    console.error(err);
-    statusMsg.textContent = "Failed to load balances";
-    statusMsg.className = "error";
-  }
+    alert("Sent! Tx: "+tx.hash);
+    closeModal();
+    setTimeout(loadBalances,3000);
+  }catch(e){alert("Failed: "+e.message);}
 }
 
-function copyAddress() {
-  if (!userAddress) return alert("Connect wallet first");
-  navigator.clipboard.writeText(userAddress);
-  alert("Address copied!");
+async function swapToken(){
+  const from=document.getElementById("swapFrom").value;
+  const to=document.getElementById("swapTo").value;
+  const amt=document.getElementById("swapAmount").value;
+  if(from==to)return alert("Select different tokens");
+  
+  const router=new ethers.Contract(PANCAKE_ROUTER,[
+    "function swapExactETHForTokens(uint,address[],uint) external payable",
+    "function swapExactTokensForTokens(uint,uint,address[],uint) external"
+  ],signer);
+  
+  const deadline=Math.floor(Date.now()/1000)+600;
+  const path=from=="BNB"?[WBNB,USDT]:[USDT,WBNB];
+  
+  try{
+    let tx;
+    if(from=="BNB"){
+      tx=await router.swapExactETHForTokens(0,path,deadline,{value:ethers.utils.parseEther(amt)});
+    }else{
+      const tokenContract=new ethers.Contract(USDT,["function approve(address,uint256)returns(bool)"],signer);
+      await tokenContract.approve(PANCAKE_ROUTER,ethers.utils.parseUnits(amt,18));
+      tx=await router.swapExactTokensForTokens(ethers.utils.parseUnits(amt,18),0,path,deadline);
+    }
+    alert("Swap success! Tx: "+tx.hash);
+    closeModal();
+    setTimeout(loadBalances,3000);
+  }catch(e){alert("Swap failed: "+e.message);}
 }
 
-function openBscScan() {
-  if (!userAddress) return alert("Connect wallet first");
-  window.open(`https://bscscan.com/address/${userAddress}`, "_blank");
+function switchPage(page){
+  document.querySelectorAll(".page").forEach(p=>p.classList.add("hidden"));
+  document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
+  document.getElementById(page+"Page").classList.remove("hidden");
+  event.currentTarget.classList.add("active");
+  if(page=="market")loadMarket();
 }
 
-// Auto reload bila tukar account
-if (window.ethereum) {
-  window.ethereum.on('accountsChanged', () => window.location.reload());
-}
+function openSendModal(){document.getElementById("sendModal").classList.add("active");}
+function openSwapModal(){document.getElementById("swapModal").classList.add("active");}
+function openReceiveModal(){document.getElementById("receiveModal").classList.add("active");}
+function openHistory(){window.open("https://bscscan.com/address/"+address);}
+function closeModal(){document.querySelectorAll(".modal").forEach(m=>m.classList.remove("active"));}
+function copyAddress(){navigator.clipboard.writeText(address);alert("Copied!");}
 </script>
 </body>
 </html>
